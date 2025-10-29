@@ -1,0 +1,192 @@
+'use client';
+
+import { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useGLTF, PerspectiveCamera } from '@react-three/drei';
+import { EffectComposer, Bloom, ChromaticAberration, DepthOfField, Glitch } from '@react-three/postprocessing';
+import { BlendFunction, GlitchMode } from 'postprocessing';
+import * as THREE from 'three';
+import { gsap } from 'gsap';
+import ParticleField from './ParticleField';
+
+function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
+  const modelRef = useRef<THREE.Group>(null);
+  const { scene } = useGLTF('/3d/doge_v_4.glb');
+  const [clonedScene] = useState(() => scene.clone());
+
+  useEffect(() => {
+    // Traverse and adjust materials for better appearance
+    clonedScene.traverse((child: THREE.Object3D) => {
+      if (child instanceof THREE.Mesh) {
+        if (child.material) {
+          const material = child.material as THREE.MeshStandardMaterial;
+          material.roughness = 0.6;
+          material.metalness = 0.3;
+          material.emissive = new THREE.Color(0x1a1a00);
+          material.emissiveIntensity = 0.1;
+        }
+      }
+    });
+  }, [clonedScene]);
+
+  useFrame((state) => {
+    if (!modelRef.current) return;
+
+    // Mouse follow for head rotation
+    const targetRotationY = mousePosition.x * 0.5;
+    const targetRotationX = -mousePosition.y * 0.3;
+
+    modelRef.current.rotation.y += (targetRotationY - modelRef.current.rotation.y) * 0.05;
+    modelRef.current.rotation.x += (targetRotationX - modelRef.current.rotation.x) * 0.05;
+
+    // Scroll-based distortion
+    const distortAmount = Math.abs(scrollProgress) * 2;
+    const baseScale = 1.5; // 2 * 1.4
+    modelRef.current.scale.x = baseScale + Math.sin(distortAmount) * 0.3;
+    modelRef.current.scale.y = baseScale - Math.sin(distortAmount) * 0.2;
+    modelRef.current.scale.z = baseScale + Math.cos(distortAmount) * 0.2;
+
+    // Slight idle animation
+    modelRef.current.position.y = -2.2 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+  });
+
+  return (
+    <group ref={modelRef} position={[0, -2.2, 0]} scale={2.5}>
+      <primitive object={clonedScene} />
+    </group>
+  );
+}
+
+function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
+  const textRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!textRef.current) return;
+
+    // Distortion based on scroll
+    const distortion = Math.abs(scrollProgress) * 3;
+    textRef.current.scale.x = 1 + Math.sin(distortion) * 0.5;
+    textRef.current.scale.y = 1 - Math.sin(distortion) * 0.3;
+  });
+
+  return (
+    <group position={[0, 1.8, -2]}>
+      <mesh ref={textRef}>
+        <planeGeometry args={[8, 2]} />
+        <meshBasicMaterial 
+          color="#ffffff" 
+          transparent 
+          opacity={0.9}
+          depthTest={true}
+          depthWrite={false}
+        >
+          <canvasTexture 
+            attach="map" 
+            image={(() => {
+              const canvas = document.createElement('canvas');
+              canvas.width = 1024;
+              canvas.height = 256;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 180px Orbitron, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('sDOGE', canvas.width / 2, canvas.height / 2);
+              }
+              return canvas;
+            })()} 
+          />
+        </meshBasicMaterial>
+      </mesh>
+    </group>
+  );
+}
+
+function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
+  const { camera } = useThree();
+
+  useFrame(() => {
+    // Camera movements based on scroll
+    camera.position.z = 5 + scrollProgress * 2;
+    camera.position.y = -scrollProgress * 1;
+  });
+
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
+      
+      {/* Lighting */}
+      <ambientLight intensity={0.3} />
+      <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
+      <directionalLight position={[-5, 3, -5]} intensity={0.5} color="#ffed4e" />
+      <pointLight position={[0, 2, 2]} intensity={1} color="#ffed4e" distance={10} />
+      <spotLight
+        position={[0, 5, 0]}
+        angle={0.5}
+        penumbra={1}
+        intensity={0.5}
+        color="#ffed4e"
+      />
+
+      <DogeModel mousePosition={mousePosition} scrollProgress={scrollProgress} />
+      <SDOGEText scrollProgress={scrollProgress} />
+      <ParticleField />
+
+      {/* Post-processing effects */}
+      <EffectComposer>
+        <Bloom
+          intensity={0.5 + Math.abs(scrollProgress) * 0.5}
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.9}
+          blendFunction={BlendFunction.ADD}
+        />
+        <ChromaticAberration
+          offset={[
+            0.001 + Math.abs(scrollProgress) * 0.005,
+            0.001 + Math.abs(scrollProgress) * 0.005
+          ] as [number, number]}
+          blendFunction={BlendFunction.NORMAL}
+        />
+        <DepthOfField
+          focusDistance={0.01}
+          focalLength={0.05}
+          bokehScale={3}
+        />
+        <Glitch
+          delay={new THREE.Vector2(1.5, 3.5)}
+          duration={new THREE.Vector2(0.1, 0.3)}
+          strength={new THREE.Vector2(0.2 + Math.abs(scrollProgress), 0.4 + Math.abs(scrollProgress))}
+          mode={GlitchMode.SPORADIC}
+          active={scrollProgress > 0.1}
+          ratio={0.85}
+        />
+      </EffectComposer>
+    </>
+  );
+}
+
+export default function Scene3D({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
+  return (
+    <Canvas
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 1,
+      }}
+      gl={{
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.2,
+      }}
+    >
+      <color attach="background" args={['#1a1a1a']} />
+      <fog attach="fog" args={['#1a1a1a', 5, 15]} />
+      <SceneContent mousePosition={mousePosition} scrollProgress={scrollProgress} />
+    </Canvas>
+  );
+}
+
