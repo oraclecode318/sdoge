@@ -3,11 +3,101 @@
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, PerspectiveCamera } from '@react-three/drei';
-import { EffectComposer, Bloom, ChromaticAberration, DepthOfField, Glitch } from '@react-three/postprocessing';
-import { BlendFunction, GlitchMode } from 'postprocessing';
+import { EffectComposer, Bloom, ChromaticAberration, DepthOfField, Glitch, Noise } from '@react-three/postprocessing';
+import { BlendFunction, GlitchMode, Effect } from 'postprocessing';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import AnalogDecayEffect from './AnalogDecayEffect';
+
+// Custom Water Distortion Effect
+const waterDistortionShader = `
+uniform float uDisplacementX;
+uniform float uDisplacementY;
+uniform float uIntensity;
+uniform sampler2D uDisplacementMap;
+
+void mainUv(inout vec2 uv) {
+  // Sample the displacement map with moving coordinates
+  vec2 displacementUv = uv + vec2(uDisplacementX, uDisplacementY);
+  vec4 displacement = texture2D(uDisplacementMap, displacementUv);
+  
+  // Apply displacement based on intensity
+  vec2 distortion = (displacement.rg - 0.5) * uIntensity;
+  uv += distortion;
+}
+`;
+
+class WaterDistortionEffect extends Effect {
+  constructor() {
+    // Create a cloud-like noise texture for displacement using Perlin-like noise
+    const size = 512;
+    const data = new Uint8Array(size * size * 4);
+    
+    // Simple Perlin-like noise function
+    const noise = (x: number, y: number) => {
+      const X = Math.floor(x) & 255;
+      const Y = Math.floor(y) & 255;
+      const xf = x - Math.floor(x);
+      const yf = y - Math.floor(y);
+      
+      const fade = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
+      const u = fade(xf);
+      const v = fade(yf);
+      
+      const hash = (i: number, j: number) => {
+        const h = (i * 374761393 + j * 668265263) & 0x7fffffff;
+        return (h ^ (h >> 13)) / 0x7fffffff;
+      };
+      
+      const a = hash(X, Y);
+      const b = hash(X + 1, Y);
+      const c = hash(X, Y + 1);
+      const d = hash(X + 1, Y + 1);
+      
+      return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v;
+    };
+    
+    // Generate multi-octave noise for cloud-like pattern
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        const x = i / size;
+        const y = j / size;
+        
+        // Combine multiple octaves for more organic look
+        let value = 0;
+        value += noise(x * 4, y * 4) * 0.5;
+        value += noise(x * 8, y * 8) * 0.25;
+        value += noise(x * 16, y * 16) * 0.125;
+        value += noise(x * 32, y * 32) * 0.0625;
+        
+        const gray = Math.floor(value * 255);
+        const idx = (i * size + j) * 4;
+        data[idx] = gray;
+        data[idx + 1] = gray;
+        data[idx + 2] = gray;
+        data[idx + 3] = 255;
+      }
+    }
+    
+    const displacementTexture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+    displacementTexture.wrapS = THREE.RepeatWrapping;
+    displacementTexture.wrapT = THREE.RepeatWrapping;
+    displacementTexture.needsUpdate = true;
+
+    super('WaterDistortionEffect', waterDistortionShader, {
+      uniforms: new Map<string, THREE.Uniform>([
+        ['uDisplacementX', new THREE.Uniform(0)],
+        ['uDisplacementY', new THREE.Uniform(0)],
+        ['uIntensity', new THREE.Uniform(0)],
+        ['uDisplacementMap', new THREE.Uniform(displacementTexture)],
+      ] as [string, THREE.Uniform][]),
+    });
+  }
+
+  update(_renderer: any, _inputBuffer: any, deltaTime: number) {
+    // This will be updated from the component
+  }
+}
 
 function BackgroundGrid() {
   const gridRef = useRef<THREE.Mesh>(null);
@@ -130,21 +220,43 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
 function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
   const textRef = useRef<THREE.Mesh>(null);
   const textureRef = useRef<THREE.CanvasTexture | null>(null);
+  const [textureReady, setTextureReady] = useState(false);
 
-  // Create canvas texture once
+  // Create canvas texture once fonts are loaded
   useEffect(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 180px Orbitron, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('sDOGE', canvas.width / 2, canvas.height / 2);
-    }
-    textureRef.current = new THREE.CanvasTexture(canvas);
+    const createTexture = async () => {
+      try {
+        // Wait for fonts to load
+        await document.fonts.ready;
+        // Extra wait to ensure Orbitron is definitely loaded
+        await document.fonts.load('bold 180px Orbitron');
+      } catch (error) {
+        console.warn('Font loading issue:', error);
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        // Clear canvas first
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Set font with fallback
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 180px Orbitron, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('sDOGE', canvas.width / 2, canvas.height / 2);
+        
+        console.log('sDOGE text created on canvas');
+      }
+      textureRef.current = new THREE.CanvasTexture(canvas);
+      textureRef.current.needsUpdate = true;
+      setTextureReady(true);
+    };
+
+    createTexture();
   }, []);
 
   useFrame((state) => {
@@ -161,6 +273,11 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
       material.uniforms.uTime.value = state.clock.elapsedTime;
     }
   });
+
+  // Don't render until texture is ready
+  if (!textureReady || !textureRef.current) {
+    return null;
+  }
 
   // Glitch shader
   const glitchShader = {
@@ -239,8 +356,30 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
 
 function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
   const { camera, scene } = useThree();
+  const waterEffectRef = useRef<WaterDistortionEffect | null>(null);
+  const scrollVelocityRef = useRef(0);
+  const lastScrollProgressRef = useRef(scrollProgress);
+  const displacementXRef = useRef(0);
+  const displacementYRef = useRef(0);
+  const currentIntensityRef = useRef(0);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
+    // Calculate scroll velocity
+    const scrollDelta = scrollProgress - lastScrollProgressRef.current;
+    const velocity = Math.abs(scrollDelta) / delta;
+    
+    // Smooth velocity with exponential decay
+    scrollVelocityRef.current = THREE.MathUtils.lerp(
+      scrollVelocityRef.current,
+      velocity,
+      0.1
+    );
+    
+    // Apply dampening when scroll stops
+    scrollVelocityRef.current *= 0.92;
+    
+    lastScrollProgressRef.current = scrollProgress;
+
     // Camera movements based on scroll
     camera.position.z = 5 + scrollProgress * 2;
     camera.position.y = -scrollProgress * 1;
@@ -256,6 +395,30 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
     // Update fog color to match background
     if (scene.fog && scene.fog instanceof THREE.Fog) {
       scene.fog.color = currentColor;
+    }
+
+    // Update water distortion effect based on scroll velocity
+    if (waterEffectRef.current) {
+      const uniforms = waterEffectRef.current.uniforms;
+      
+      // Move displacement map - faster movement based on scroll velocity
+      const speed = scrollVelocityRef.current * 0.5;
+      displacementXRef.current += speed * delta * 0.3;
+      displacementYRef.current += speed * delta * 1.2; // More vertical movement like reference
+      
+      // Target intensity based on scroll velocity - stronger effect
+      const targetIntensity = Math.min(scrollVelocityRef.current * 0.15, 0.5); // Max 0.5 for strong effect
+      
+      // Smooth intensity transition
+      currentIntensityRef.current = THREE.MathUtils.lerp(
+        currentIntensityRef.current,
+        targetIntensity,
+        0.15
+      );
+      
+      uniforms.get('uDisplacementX')!.value = displacementXRef.current;
+      uniforms.get('uDisplacementY')!.value = displacementYRef.current;
+      uniforms.get('uIntensity')!.value = currentIntensityRef.current;
     }
   });
 
@@ -306,6 +469,11 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
 
       {/* Post-processing effects */}
       <EffectComposer>
+        {/* Water Distortion - first in pipeline for full-screen effect */}
+        <primitive 
+          object={new WaterDistortionEffect()} 
+          ref={waterEffectRef}
+        />
         <Bloom
           intensity={0.3 + Math.abs(scrollProgress) * 0.3}
           luminanceThreshold={0.4}
