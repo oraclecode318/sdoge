@@ -8,6 +8,7 @@ import HeroText from '@/components/HeroText';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
+import CustomCursor from '@/components/CustomCursor';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 
@@ -27,8 +28,9 @@ export default function Home() {
 
   return (
     <SmoothScroll>
+      <CustomCursor />
       <LoadingScreen />
-      <main className="relative min-h-[300vh] bg-black overflow-x-hidden">
+      <main className="relative min-h-[300vh] bg-black overflow-x-hidden" style={{ cursor: 'none' }}>
       {/* Three.js Scene */}
       <Suspense fallback={null}>
         <Scene3D mousePosition={mousePosition} scrollProgress={scrollProgress} />
@@ -60,7 +62,7 @@ export default function Home() {
       {/* Scroll Progress Indicator */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 h-1 bg-yellow-200/40" style={{ width: '25%' }}>
         <div
-          className="h-full bg-yellow-300/40 transition-all duration-100"
+          className="h-full bg-yellow-300/80 transition-all duration-100"
           style={{ width: `${scrollProgress * 100}%` }}
         />
       </div>

@@ -36,6 +36,11 @@ body {
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  cursor: none;
+}
+
+* {
+  cursor: none !important;
 }
 
 body::-webkit-scrollbar {

@@ -14,7 +14,7 @@ export default function Header() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 md:px-8 py-3 backdrop-blur-sm bg-[#1a1a1a]/20"
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 md:px-8 py-3 backdrop-blur-sm bg-transparent"
         style={{ padding: '12px' }}
       >
         {/* Logo */}
@@ -32,7 +32,7 @@ export default function Header() {
             <motion.a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="text-sm font-normal text-white/80 hover:text-yellow-400 transition-colors uppercase tracking-wider relative"
+              className="text-sm font-normal text-white hover:text-yellow-400 transition-colors uppercase tracking-wider relative"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 + 0.3 }}

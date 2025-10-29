@@ -7,7 +7,7 @@ import { EffectComposer, Bloom, ChromaticAberration, DepthOfField, Glitch } from
 import { BlendFunction, GlitchMode } from 'postprocessing';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
-import ParticleField from './ParticleField';
+import AnalogDecayEffect from './AnalogDecayEffect';
 
 function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
   const modelRef = useRef<THREE.Group>(null);
@@ -15,15 +15,23 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
   const [clonedScene] = useState(() => scene.clone());
 
   useEffect(() => {
-    // Traverse and adjust materials for better appearance
+    // Traverse and adjust materials with color
     clonedScene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
         if (child.material) {
           const material = child.material as THREE.MeshStandardMaterial;
-          material.roughness = 0.6;
-          material.metalness = 0.3;
-          material.emissive = new THREE.Color(0x1a1a00);
-          material.emissiveIntensity = 0.1;
+          
+          // Add golden/yellow color to the doge
+          material.color = new THREE.Color(0x7c6217); // Yellow color
+          material.roughness = 0.4;
+          material.metalness = 0.2;
+          
+          // Add slight glow effect
+          material.emissive = new THREE.Color(0xffaa00);
+          material.emissiveIntensity = 0.15;
+          
+          // Make material respond better to light
+          material.needsUpdate = true;
         }
       }
     });
@@ -116,35 +124,34 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
       
-      {/* Lighting */}
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
-      <directionalLight position={[-5, 3, -5]} intensity={0.5} color="#ffed4e" />
-      <pointLight position={[0, 2, 2]} intensity={1} color="#ffed4e" distance={10} />
+      {/* Lighting - Much brighter for clarity */}
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[5, 5, 5]} intensity={2.5} color="#ffffff" />
+      <directionalLight position={[-5, 3, -5]} intensity={1.5} color="#ffffff" />
+      <pointLight position={[0, 2, 2]} intensity={2} color="#ffffff" distance={15} />
       <spotLight
-        position={[0, 5, 0]}
-        angle={0.5}
+        position={[0, 8, 5]}
+        angle={0.6}
         penumbra={1}
-        intensity={0.5}
-        color="#ffed4e"
+        intensity={1.5}
+        color="#ffffff"
       />
 
       <DogeModel mousePosition={mousePosition} scrollProgress={scrollProgress} />
       <SDOGEText scrollProgress={scrollProgress} />
-      <ParticleField />
 
       {/* Post-processing effects */}
       <EffectComposer>
         <Bloom
-          intensity={0.5 + Math.abs(scrollProgress) * 0.5}
-          luminanceThreshold={0.2}
+          intensity={0.3 + Math.abs(scrollProgress) * 0.3}
+          luminanceThreshold={0.4}
           luminanceSmoothing={0.9}
           blendFunction={BlendFunction.ADD}
         />
         <ChromaticAberration
           offset={[
-            0.001 + Math.abs(scrollProgress) * 0.005,
-            0.001 + Math.abs(scrollProgress) * 0.005
+            0.0005 + Math.abs(scrollProgress) * 0.002,
+            0.0005 + Math.abs(scrollProgress) * 0.002
           ] as [number, number]}
           blendFunction={BlendFunction.NORMAL}
         />
@@ -161,6 +168,7 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
           active={scrollProgress > 0.1}
           ratio={0.85}
         />
+        <AnalogDecayEffect />
       </EffectComposer>
     </>
   );
@@ -180,11 +188,11 @@ export default function Scene3D({ mousePosition, scrollProgress }: { mousePositi
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
+        toneMappingExposure: 1.5,
       }}
     >
       <color attach="background" args={['#1a1a1a']} />
-      <fog attach="fog" args={['#1a1a1a', 5, 15]} />
+      <fog attach="fog" args={['#1a1a1a', 15, 30]} />
       <SceneContent mousePosition={mousePosition} scrollProgress={scrollProgress} />
     </Canvas>
   );
