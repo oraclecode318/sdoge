@@ -9,6 +9,7 @@ import ScrollIndicator from '@/components/ScrollIndicator';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
+import RippleEffect from '@/components/RippleEffect';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 
@@ -29,6 +30,7 @@ export default function Home() {
   return (
     <SmoothScroll>
       <CustomCursor />
+      <RippleEffect />
       <LoadingScreen />
       <main className="relative min-h-[300vh] bg-black overflow-x-hidden" style={{ cursor: 'none' }}>
       {/* Three.js Scene */}
