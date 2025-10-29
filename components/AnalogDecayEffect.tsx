@@ -97,7 +97,7 @@ class AnalogDecayEffectImpl extends Effect {
 }
 
 const AnalogDecayEffect = forwardRef<any, {}>((props, ref) => {
-  const effect = useRef<AnalogDecayEffectImpl>();
+  const effect = useRef<AnalogDecayEffectImpl | null>(null);
 
   useEffect(() => {
     effect.current = new AnalogDecayEffectImpl();
