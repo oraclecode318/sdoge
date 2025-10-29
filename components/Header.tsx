@@ -56,7 +56,7 @@ export default function Header() {
             <FaXTwitter size={20} />
           </motion.a>
           <motion.button
-            className="bg-yellow-400 text-black cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
+            className="bg-[#ffd841] text-black cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
             style={{ padding: '6px' }}
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 237, 78, 0.4)' }}
             whileTap={{ scale: 0.95 }}
