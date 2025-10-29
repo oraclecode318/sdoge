@@ -2,11 +2,57 @@
 
 import { motion } from 'framer-motion';
 import { FaXTwitter } from 'react-icons/fa6';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { gsap } from 'gsap';
 import { LINKS } from '@/utils/constants';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Typing scramble effect (slower)
+  const scrambleText = (element: HTMLElement, finalText: string, duration: number = 1.2) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    const length = finalText.length;
+    let frame = 0;
+    const totalFrames = Math.floor(duration * 60); // 60 fps
+
+    const interval = setInterval(() => {
+      if (frame >= totalFrames) {
+        element.textContent = finalText;
+        clearInterval(interval);
+        return;
+      }
+
+      let scrambled = '';
+      for (let i = 0; i < length; i++) {
+        const progress = frame / totalFrames;
+        if (progress > i / length) {
+          scrambled += finalText[i];
+        } else {
+          scrambled += chars[Math.floor(Math.random() * chars.length)];
+        }
+      }
+      element.textContent = scrambled;
+      frame++;
+    }, 1000 / 60);
+  };
+
+  const handleMenuItemHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const element = e.currentTarget;
+    const originalText = element.getAttribute('data-text') || element.textContent || '';
+    
+    // Only typing scramble effect (no flip)
+    scrambleText(element, originalText, 1.2);
+  };
+
+  const handleButtonHover = () => {
+    if (!buttonRef.current) return;
+    const originalText = buttonRef.current.getAttribute('data-text') || buttonRef.current.textContent || '';
+    
+    // Only typing scramble effect (no flip)
+    scrambleText(buttonRef.current, originalText, 1.2);
+  };
 
   return (
     <>
@@ -36,7 +82,9 @@ export default function Header() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 + 0.3 }}
-              whileHover={{ y: -2 }}
+              data-text={item}
+              onMouseEnter={handleMenuItemHover}
+              style={{ display: 'inline-block' }}
             >
               {item}
             </motion.a>
@@ -56,10 +104,12 @@ export default function Header() {
             <FaXTwitter size={20} />
           </motion.a>
           <motion.button
+            ref={buttonRef}
             className="bg-[#ffd841] text-black cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
-            style={{ padding: '6px' }}
-            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 237, 78, 0.4)' }}
+            style={{ padding: '6px', display: 'inline-block' }}
             whileTap={{ scale: 0.95 }}
+            data-text="STAKE AND EARN"
+            onMouseEnter={handleButtonHover}
           >
             STAKE AND EARN
           </motion.button>
