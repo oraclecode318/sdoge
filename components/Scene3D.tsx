@@ -228,8 +228,8 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
       try {
         // Wait for fonts to load
         await document.fonts.ready;
-        // Extra wait to ensure Orbitron is definitely loaded
-        await document.fonts.load('bold 180px Orbitron');
+        // Extra wait to ensure Aktiv Grotesk Extended is definitely loaded
+        await document.fonts.load('900 220px "Aktiv Grotesk Extended"');
       } catch (error) {
         console.warn('Font loading issue:', error);
       }
@@ -242,9 +242,9 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
         // Clear canvas first
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Set font with fallback
+        // Set font with fallback - using Aktiv Grotesk Extended
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 180px Orbitron, Arial, sans-serif';
+        ctx.font = '900 250px "Aktiv Grotesk Extended", "Space Grotesk", "Arial Black", sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('sDOGE', canvas.width / 2, canvas.height / 2);

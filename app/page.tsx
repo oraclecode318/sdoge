@@ -9,7 +9,7 @@ import ScrollIndicator from '@/components/ScrollIndicator';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
-import RippleEffect from '@/components/RippleEffect';
+// import RippleEffect from '@/components/RippleEffect';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 
@@ -24,13 +24,13 @@ const Scene3D = dynamic(() => import('@/components/Scene3D'), {
 });
 
 export default function Home() {
-  const mousePosition = useMousePosition();
+  const mousePosition = useMousePosition();             
   const { scrollProgress, scrollVelocity } = useScrollProgress();
 
   return (
     <SmoothScroll>
       <CustomCursor />
-      <RippleEffect />
+      {/* <RippleEffect /> */}
       <LoadingScreen />
       <main className="relative min-h-[300vh] bg-black overflow-x-hidden" style={{ cursor: 'none' }}>
       {/* Three.js Scene */}

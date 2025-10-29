@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* Aktiv Grotesk Extended Font */
+@font-face {
+  font-family: 'Aktiv Grotesk Extended';
+  src: url('/fonts/AktivGroteskExtended-Bold.woff2') format('woff2'),
+       url('/fonts/AktivGroteskExtended-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aktiv Grotesk Extended';
+  src: url('/fonts/AktivGroteskExtended-Black.woff2') format('woff2'),
+       url('/fonts/AktivGroteskExtended-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #1a1a1a;
   --foreground: #ffffff;
