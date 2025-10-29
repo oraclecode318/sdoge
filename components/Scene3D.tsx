@@ -9,6 +9,64 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import AnalogDecayEffect from './AnalogDecayEffect';
 
+function BackgroundGrid() {
+  const gridRef = useRef<THREE.Mesh>(null);
+
+  useEffect(() => {
+    if (!gridRef.current) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 2048;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.strokeStyle = '#444444';
+      ctx.lineWidth = 2;
+
+      // Draw vertical lines with varying gaps
+      let x = 0;
+      while (x < canvas.width) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+        x += 40 + Math.random() * 20;
+      }
+
+      // Draw horizontal lines with varying gaps
+      let y = 0;
+      while (y < canvas.height) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+        y += 30 + Math.random() * 20;
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(2, 2);
+      
+      if (gridRef.current.material instanceof THREE.MeshBasicMaterial) {
+        gridRef.current.material.map = texture;
+        gridRef.current.material.needsUpdate = true;
+      }
+    }
+  }, []);
+
+  return (
+    <mesh ref={gridRef} position={[0, 0, -10]} rotation={[0, 0, 0]}>
+      <planeGeometry args={[100, 100]} />
+      <meshBasicMaterial color="#1a1a1a" transparent opacity={0.95} />
+    </mesh>
+  );
+}
+
 function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
   const modelRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/3d/doge_v_4.glb');
@@ -22,7 +80,7 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
           const material = child.material as THREE.MeshStandardMaterial;
           
           // Add golden/yellow color to the doge
-          material.color = new THREE.Color(0x7c6217); // Yellow color
+          material.color = new THREE.Color(0xbfb05e); // Yellow color
           material.roughness = 0.4;
           material.metalness = 0.2;
           
@@ -124,6 +182,9 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
       
+      {/* Background Grid */}
+      <BackgroundGrid />
+      
       {/* Lighting - Much brighter for clarity */}
       <ambientLight intensity={1.2} />
       <directionalLight position={[5, 5, 5]} intensity={2.5} color="#ffffff" />
@@ -157,8 +218,8 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
         />
         <DepthOfField
           focusDistance={0.01}
-          focalLength={0.05}
-          bokehScale={3}
+          focalLength={0.02}
+          bokehScale={1.5}
         />
         <Glitch
           delay={new THREE.Vector2(1.5, 3.5)}
@@ -188,11 +249,11 @@ export default function Scene3D({ mousePosition, scrollProgress }: { mousePositi
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.5,
+        toneMappingExposure: 1.8,
       }}
     >
       <color attach="background" args={['#1a1a1a']} />
-      <fog attach="fog" args={['#1a1a1a', 15, 30]} />
+      <fog attach="fog" args={['#1a1a1a', 30, 50]} />
       <SceneContent mousePosition={mousePosition} scrollProgress={scrollProgress} />
     </Canvas>
   );

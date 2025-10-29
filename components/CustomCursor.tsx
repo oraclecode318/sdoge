@@ -78,7 +78,7 @@ export default function CustomCursor() {
         />
       ))}
 
-      {/* Main cursor circle */}
+      {/* Main cursor circle with centered dot */}
       <motion.div
         ref={cursorRef}
         style={{
@@ -92,6 +92,8 @@ export default function CustomCursor() {
           backgroundColor: 'rgba(255, 237, 78, 0.1)',
           pointerEvents: 'none',
           zIndex: 9999,
+          left: 0,
+          top: 0,
           transform: 'translate(-50%, -50%)',
           boxShadow: isMoving 
             ? '0 0 20px rgba(255, 237, 78, 0.8), 0 0 40px rgba(255, 237, 78, 0.4), inset 0 0 10px rgba(255, 237, 78, 0.3)'
@@ -113,24 +115,22 @@ export default function CustomCursor() {
             }}
           />
         )}
+        
+        {/* Cursor dot center - now inside the circle */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            width: '4px',
+            height: '4px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 237, 78, 1)',
+            transform: 'translate(-50%, -50%)',
+            boxShadow: '0 0 5px rgba(255, 237, 78, 0.8)',
+          }}
+        />
       </motion.div>
-
-      {/* Cursor dot center */}
-      <motion.div
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          position: 'fixed',
-          width: '4px',
-          height: '4px',
-          borderRadius: '50%',
-          backgroundColor: 'rgba(255, 237, 78, 1)',
-          pointerEvents: 'none',
-          zIndex: 10000,
-          transform: 'translate(-50%, -50%)',
-          boxShadow: '0 0 5px rgba(255, 237, 78, 0.8)',
-        }}
-      />
     </>
   );
 }

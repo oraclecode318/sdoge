@@ -34,24 +34,6 @@ const fragmentShader = `
     
     vec4 color = inputColor;
     
-    // Color bleeding/channel separation
-    float bleedAmount = 0.012 * uBleeding * uIntensity;
-    float offsetPhase = uTime * 1.5 + uv.y * 20.0;
-    
-    vec2 redOffset = vec2(sin(offsetPhase) * bleedAmount, 0.0);
-    vec2 blueOffset = vec2(-sin(offsetPhase * 1.1) * bleedAmount * 0.8, 0.0);
-    
-    // Sample color channels separately for bleeding effect
-    float r = color.r;
-    float g = color.g;
-    float b = color.b;
-    
-    // Apply subtle bleeding
-    r += sin(offsetPhase) * 0.02 * uBleeding * uIntensity;
-    b -= sin(offsetPhase * 1.1) * 0.02 * uBleeding * uIntensity;
-    
-    color = vec4(r, g, b, color.a);
-    
     // Film grain
     float grain = random(distortedUV * uTime) * 0.075 * uGrain * uIntensity;
     color.rgb += grain;
@@ -80,13 +62,13 @@ class AnalogDecayEffectImpl extends Effect {
     super('AnalogDecayEffect', fragmentShader, {
       uniforms: new Map([
         ['uTime', new Uniform(0)],
-        ['uGrain', new Uniform(0.4)],
-        ['uBleeding', new Uniform(1.0)],
-        ['uVSync', new Uniform(1.0)],
-        ['uScanlines', new Uniform(1.0)],
-        ['uVignette', new Uniform(1.0)],
-        ['uJitter', new Uniform(0.4)],
-        ['uIntensity', new Uniform(0.6)],
+        ['uGrain', new Uniform(0.35)],
+        ['uBleeding', new Uniform(0.0)],
+        ['uVSync', new Uniform(0.8)],
+        ['uScanlines', new Uniform(0.8)],
+        ['uVignette', new Uniform(0.9)],
+        ['uJitter', new Uniform(0.3)],
+        ['uIntensity', new Uniform(0.5)],
       ]),
     });
   }
