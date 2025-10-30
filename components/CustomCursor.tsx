@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import Image from 'next/image';
 
 export default function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
+  const [isVisible, setIsVisible] = useState(true);
   
   // Slight delay with spring animation
   const springConfig = { damping: 20, stiffness: 200, mass: 0.8 };
@@ -17,6 +18,12 @@ export default function CustomCursor() {
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
+      
+      // Hide dogecoin icon in header (top ~70px) and ticker (bottom ~70px) areas
+      const isInHeader = e.clientY < 70;
+      const isInTicker = e.clientY > window.innerHeight - 70;
+      
+      setIsVisible(!isInHeader && !isInTicker);
     };
 
     window.addEventListener('mousemove', moveCursor);
@@ -25,6 +32,8 @@ export default function CustomCursor() {
       window.removeEventListener('mousemove', moveCursor);
     };
   }, [cursorX, cursorY]);
+
+  if (!isVisible) return null;
 
   return (
     <motion.div
