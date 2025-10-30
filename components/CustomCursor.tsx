@@ -41,8 +41,8 @@ export default function CustomCursor() {
         x: cursorXSpring,
         y: cursorYSpring,
         position: 'fixed',
-        width: '24px',
-        height: '24px',
+        width: '32px',
+        height: '32px',
         pointerEvents: 'none',
         zIndex: 9999,
         left: 0,
@@ -53,8 +53,8 @@ export default function CustomCursor() {
       <Image
         src="/image/cursor.png"
         alt="Dogecoin cursor"
-        width={60}
-        height={60}
+        width={72}
+        height={72}
         style={{
           width: '100%',
           height: '100%',
