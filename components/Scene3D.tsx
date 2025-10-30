@@ -312,110 +312,25 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
   const displacementXRef = useRef(0);
   const displacementYRef = useRef(0);
   const currentIntensityRef = useRef(0);
-  
-  // Grid refs
-  const floorRef = useRef<THREE.Mesh>(null);
-  const backWallRef = useRef<THREE.Mesh>(null);
+  const [backgroundTexture, setBackgroundTexture] = useState<THREE.Texture | null>(null);
 
-  // Create converging perspective grid texture
-  const createPerspectiveGrid = (type: 'floor' | 'wall') => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 2048;
-    canvas.height = 2048;
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) return null;
-
-    ctx.fillStyle = '#1a1a1a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Brighter, more visible grid lines
-    ctx.strokeStyle = '#898989';
-    ctx.lineWidth = 3;
-
-    const centerX = canvas.width / 2;
-    const centerY = type === 'floor' ? 0 : canvas.height / 2;
-    
-    if (type === 'floor') {
-      // Floor grid - converging toward horizon (top of texture)
-      const vanishingY = canvas.height * 0.1; // Vanishing point near top
-      
-      // Horizontal lines (going away from camera) - converge to vanishing point
-      for (let i = 0; i < 20; i++) {
-        const progress = i / 20;
-        const y = canvas.height - (canvas.height - vanishingY) * Math.pow(progress, 0.6);
-        
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-      
-      // Vertical lines (perpendicular to camera) - converge to center vanishing point
-      for (let i = 0; i <= 40; i++) {
-        const x = (i / 20) * canvas.width;
-        const spreadTop = Math.abs(x - centerX) * 0.3;
-        
-        ctx.beginPath();
-        ctx.moveTo(x, canvas.height);
-        ctx.lineTo(centerX + (x > centerX ? spreadTop : -spreadTop), vanishingY);
-        ctx.stroke();
-      }
-    } else {
-      // Back wall grid - similar perspective to floor but vertical
-      const vanishingX = centerX;
-      const vanishingY = centerY;
-      
-      // Horizontal lines - converge to center horizontally
-      for (let i = 0; i <= 25; i++) {
-        const y = (i / 25) * canvas.height;
-        
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-      
-      // Vertical lines - converge toward center vanishing point
-      for (let i = 0; i <= 40; i++) {
-        const x = (i / 40) * canvas.width;
-        
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(vanishingX, vanishingY);
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.moveTo(x, canvas.height);
-        ctx.lineTo(vanishingX, vanishingY);
-        ctx.stroke();
-      }
-    }
-
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    return texture;
-  };
-
+  // Load background image
   useEffect(() => {
-    // Floor
-    if (floorRef.current) {
-      const texture = createPerspectiveGrid('floor');
-      if (texture && floorRef.current.material instanceof THREE.MeshBasicMaterial) {
-        floorRef.current.material.map = texture;
-        floorRef.current.material.needsUpdate = true;
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      '/image/bg1.jpg',
+      (texture) => {
+        // Set proper color space for accurate colors
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.needsUpdate = true;
+        console.log('Background image loaded successfully');
+        setBackgroundTexture(texture);
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading background image:', error);
       }
-    }
-
-    // Back Wall
-    if (backWallRef.current) {
-      const texture = createPerspectiveGrid('wall');
-      if (texture && backWallRef.current.material instanceof THREE.MeshBasicMaterial) {
-        backWallRef.current.material.map = texture;
-        backWallRef.current.material.needsUpdate = true;
-      }
-    }
+    );
   }, []);
 
   useFrame((state, delta) => {
@@ -439,17 +354,11 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
     camera.position.z = 5 + scrollProgress * 2;
     camera.position.y = -scrollProgress * 1;
     
-    // Smooth background color transition based on scroll
-    // From dark gray (#1a1a1a) to darker blue mixed (#252a30)
-    const startColor = new THREE.Color(0x131313); // Dark gray
-    const endColor = new THREE.Color(0x1b1e23);   // Darker blue-gray
-    
-    const currentColor = startColor.clone().lerp(endColor, Math.min(scrollProgress, 1));
-    scene.background = currentColor;
-    
-    // Update fog color to match background
-    if (scene.fog && scene.fog instanceof THREE.Fog) {
-      scene.fog.color = currentColor;
+    // Apply background texture if loaded
+    if (backgroundTexture && scene.background !== backgroundTexture) {
+      scene.background = backgroundTexture;
+      // Disable fog to prevent gray overlay on background
+      scene.fog = null;
     }
 
     // Update water distortion effect based on scroll velocity
@@ -480,38 +389,6 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
-      
-      {/* Background Grid - Floor */}
-      <mesh 
-        ref={floorRef} 
-        position={[0, -6, 0]} 
-        rotation={[-Math.PI / 2, 0, 0]}
-      >
-        <planeGeometry args={[200, 80]} />
-        <meshBasicMaterial 
-          color="#1a1a1a" 
-          transparent 
-          opacity={1.0} 
-          side={THREE.DoubleSide}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {/* Background Grid - Back Wall */}
-      <mesh 
-        ref={backWallRef} 
-        position={[0, 0, -50]} 
-        rotation={[0, 0, 0]}
-      >
-        <planeGeometry args={[200, 40]} />
-        <meshBasicMaterial 
-          color="#1a1a1a" 
-          transparent 
-          opacity={1.0} 
-          side={THREE.DoubleSide}
-          toneMapped={false}
-        />
-      </mesh>
       
       {/* Lighting - Strong contrast setup */}
       {/* Very low ambient light - makes unlit areas dark */}
@@ -605,11 +482,9 @@ export default function Scene3D({ mousePosition, scrollProgress }: { mousePositi
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 2.2,
+        toneMappingExposure: 1.0,
       }}
     >
-      <color attach="background" args={['#1a1a1a']} />
-      <fog attach="fog" args={['#1a1a1a', 30, 50]} />
       <SceneContent mousePosition={mousePosition} scrollProgress={scrollProgress} />
     </Canvas>
   );
