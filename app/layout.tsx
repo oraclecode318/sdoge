@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Orbitron } from "next/font/google";
+import { Inter, Space_Grotesk, Orbitron, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,6 +20,12 @@ const orbitron = Orbitron({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata: Metadata = {
   title: "sDOGE - Stake and Earn",
   description: "sDOGE - The future of decentralized staking",
@@ -33,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable} antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable} ${spaceMono.variable} antialiased`}
         style={{ fontFamily: 'var(--font-inter)' }}
       >
         {children}

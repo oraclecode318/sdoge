@@ -100,60 +100,197 @@ class WaterDistortionEffect extends Effect {
 }
 
 function BackgroundGrid() {
-  const gridRef = useRef<THREE.Mesh>(null);
+  const floorRef = useRef<THREE.Mesh>(null);
+  const leftWallRef = useRef<THREE.Mesh>(null);
+  const rightWallRef = useRef<THREE.Mesh>(null);
+  const backWallRef = useRef<THREE.Mesh>(null);
 
-  useEffect(() => {
-    if (!gridRef.current) return;
-
+  // Create converging perspective grid texture
+  const createPerspectiveGrid = (type: 'floor' | 'wall') => {
     const canvas = document.createElement('canvas');
     canvas.width = 2048;
     canvas.height = 2048;
     const ctx = canvas.getContext('2d');
     
-    if (ctx) {
-      ctx.fillStyle = '#1a1a1a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!ctx) return null;
+
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Brighter, more visible grid lines
+    ctx.strokeStyle = '#898989';
+    ctx.lineWidth = 3;
+
+    const centerX = canvas.width / 2;
+    const centerY = type === 'floor' ? 0 : canvas.height / 2;
+    
+    if (type === 'floor') {
+      // Floor grid - converging toward horizon (top of texture)
+      const vanishingY = canvas.height * 0.1; // Vanishing point near top
       
-      ctx.strokeStyle = '#444444';
-      ctx.lineWidth = 2;
-
-      // Draw vertical lines with varying gaps
-      let x = 0;
-      while (x < canvas.width) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-        x += 40 + Math.random() * 20;
-      }
-
-      // Draw horizontal lines with varying gaps
-      let y = 0;
-      while (y < canvas.height) {
+      // Horizontal lines (going away from camera) - converge to vanishing point
+      for (let i = 0; i < 20; i++) {
+        const progress = i / 20;
+        const y = canvas.height - (canvas.height - vanishingY) * Math.pow(progress, 0.6);
+        
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
-        y += 30 + Math.random() * 20;
       }
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(2, 2);
       
-      if (gridRef.current.material instanceof THREE.MeshBasicMaterial) {
-        gridRef.current.material.map = texture;
-        gridRef.current.material.needsUpdate = true;
+      // Vertical lines (perpendicular to camera) - converge to center vanishing point
+      for (let i = 0; i <= 40; i++) {
+        const x = (i / 20) * canvas.width;
+        const spreadTop = Math.abs(x - centerX) * 0.3;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height);
+        ctx.lineTo(centerX + (x > centerX ? spreadTop : -spreadTop), vanishingY);
+        ctx.stroke();
+      }
+    } else {
+      // Wall grid - converge toward center vanishing point
+      const vanishingX = centerX;
+      const vanishingY = centerY;
+      
+      // Horizontal lines converging to center
+      for (let i = 0; i < 30; i++) {
+        const yTop = (i / 30) * canvas.height;
+        
+        ctx.beginPath();
+        ctx.moveTo(0, yTop);
+        ctx.lineTo(canvas.width, yTop);
+        ctx.stroke();
+      }
+      
+      // Vertical lines converging to center vanishing point
+      for (let i = 0; i < 20; i++) {
+        const x = (i / 19) * canvas.width;
+        const offsetFromCenter = x - centerX;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(vanishingX + offsetFromCenter * 0.2, vanishingY);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height);
+        ctx.lineTo(vanishingX + offsetFromCenter * 0.2, vanishingY);
+        ctx.stroke();
+      }
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    return texture;
+  };
+
+  useEffect(() => {
+    // Floor
+    if (floorRef.current) {
+      const texture = createPerspectiveGrid('floor');
+      if (texture && floorRef.current.material instanceof THREE.MeshBasicMaterial) {
+        floorRef.current.material.map = texture;
+        floorRef.current.material.needsUpdate = true;
+      }
+    }
+
+    // Left Wall
+    if (leftWallRef.current) {
+      const texture = createPerspectiveGrid('wall');
+      if (texture && leftWallRef.current.material instanceof THREE.MeshBasicMaterial) {
+        leftWallRef.current.material.map = texture;
+        leftWallRef.current.material.needsUpdate = true;
+      }
+    }
+
+    // Right Wall
+    if (rightWallRef.current) {
+      const texture = createPerspectiveGrid('wall');
+      if (texture && rightWallRef.current.material instanceof THREE.MeshBasicMaterial) {
+        rightWallRef.current.material.map = texture;
+        rightWallRef.current.material.needsUpdate = true;
+      }
+    }
+
+    // Back Wall
+    if (backWallRef.current) {
+      const texture = createPerspectiveGrid('wall');
+      if (texture && backWallRef.current.material instanceof THREE.MeshBasicMaterial) {
+        backWallRef.current.material.map = texture;
+        backWallRef.current.material.needsUpdate = true;
       }
     }
   }, []);
 
   return (
-    <mesh ref={gridRef} position={[0, 0, -10]} rotation={[0, 0, 0]}>
-      <planeGeometry args={[100, 100]} />
-      <meshBasicMaterial color="#1a1a1a" transparent opacity={0.95} />
-    </mesh>
+    <group>
+      {/* Floor - bottom face */}
+      <mesh 
+        ref={floorRef} 
+        position={[0, -6, 0]} 
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <planeGeometry args={[50, 80]} />
+        <meshBasicMaterial 
+          color="#1a1a1a" 
+          transparent 
+          opacity={1.0} 
+          side={THREE.DoubleSide}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* Left wall - side face */}
+      <mesh 
+        ref={leftWallRef} 
+        position={[-25, 0, -10]} 
+        rotation={[0, Math.PI / 2, 0]}
+      >
+        <planeGeometry args={[80, 40]} />
+        <meshBasicMaterial 
+          color="#1a1a1a" 
+          transparent 
+          opacity={1.0} 
+          side={THREE.DoubleSide}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* Right wall - side face */}
+      <mesh 
+        ref={rightWallRef} 
+        position={[25, 0, -10]} 
+        rotation={[0, -Math.PI / 2, 0]}
+      >
+        <planeGeometry args={[80, 40]} />
+        <meshBasicMaterial 
+          color="#1a1a1a" 
+          transparent 
+          opacity={1.0} 
+          side={THREE.DoubleSide}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* Back wall - back face */}
+      <mesh 
+        ref={backWallRef} 
+        position={[0, 0, -50]} 
+        rotation={[0, 0, 0]}
+      >
+        <planeGeometry args={[50, 40]} />
+        <meshBasicMaterial 
+          color="#ffffff" 
+          transparent 
+          opacity={1.0} 
+          side={THREE.DoubleSide}
+          toneMapped={false}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -444,7 +581,7 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
       {/* Main top light - creates strong highlight on head */}
       <directionalLight 
         position={[0, 10, 3]} 
-        intensity={5} 
+        intensity={2.5} 
         color="#ffffff"
         castShadow
       />
@@ -452,7 +589,7 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
       {/* Front fill light - illuminates face */}
       <directionalLight 
         position={[2, 3, 6]} 
-        intensity={2.5} 
+        intensity={1.5} 
         color="#fffbf0" 
       />
       
@@ -466,7 +603,7 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
       {/* Point light focused on head */}
       <pointLight 
         position={[0, 2, 3]} 
-        intensity={2.5} 
+        intensity={1.5} 
         color="#fff8e7" 
         distance={8} 
         decay={2}
