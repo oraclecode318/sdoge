@@ -38,14 +38,14 @@ export default function Ticker() {
 
   return (
     <div
-    style={{ padding: '6px 0px', fontFamily: 'var(--font-space-mono)' }}
-    className="fixed py-2 px-4 bottom-0 left-0 right-0 z-50 bg-[#000000] border-t border-yellow-400/30 overflow-hidden">
+    style={{ padding: '6px 0px' }}
+    className="fixed py-2 px-4 bottom-0 left-0 right-0 z-50 bg-[#000000] overflow-hidden">
       <div ref={containerRef} className="flex whitespace-nowrap py-3 will-change-transform">
-        <div className="ticker-content flex items-center">
+        <div className="ticker-content flex items-center py-4">
           {tickerText.split(' ').filter(word => word.length > 0).map((word, i) => (
             <span
               key={i}
-              style={{ margin: '0 4px', fontSize: '14px' }}
+              style={{ margin: '6px 4px', fontSize: '14px' }}
               className={`font-normal text-sm ${
                 word.includes('$') ? 'text-white mx-5' : 'text-yellow-400 mx-3'
               }`}

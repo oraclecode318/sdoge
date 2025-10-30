@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, PerspectiveCamera } from '@react-three/drei';
 import { EffectComposer, Bloom, ChromaticAberration, DepthOfField, Glitch, Noise } from '@react-three/postprocessing';
@@ -146,17 +146,17 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
 
     // Scroll-based distortion
     const distortAmount = Math.abs(scrollProgress) * 2;
-    const baseScale = 1.5; // 2 * 1.4
+    const baseScale = 1.275; // 2.125 * 0.6 (reduced by 15%)
     modelRef.current.scale.x = baseScale + Math.sin(distortAmount) * 0.3;
     modelRef.current.scale.y = baseScale - Math.sin(distortAmount) * 0.2;
     modelRef.current.scale.z = baseScale + Math.cos(distortAmount) * 0.2;
 
     // Slight idle animation
-    modelRef.current.position.y = -2.2 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+    modelRef.current.position.y = -1.7 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
   });
 
   return (
-    <group ref={modelRef} position={[0, -2.2, 0]} scale={2.5}>
+    <group ref={modelRef} position={[0, -1.7, 0]} scale={2.125}>
       <primitive object={clonedScene} />
     </group>
   );
@@ -293,7 +293,7 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
   return (
     <group position={[0, 1.8, -2]}>
       <mesh ref={textRef}>
-        <planeGeometry args={[8, 2]} />
+        <planeGeometry args={[6.8, 1.7]} />
         <shaderMaterial
           uniforms={glitchShader.uniforms}
           vertexShader={glitchShader.vertexShader}
@@ -304,6 +304,41 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
         />
       </mesh>
     </group>
+  );
+}
+
+function GradientOverlay() {
+  // Create gradient texture
+  const gradientTexture = React.useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#0a0a0a');
+      gradient.addColorStop(0.9, 'rgba(10, 10, 10, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }, []);
+
+  return (
+    <mesh position={[0, 3, -3.5]}>
+      <planeGeometry args={[20, 12]} />
+      <meshBasicMaterial 
+        map={gradientTexture} 
+        transparent 
+        depthWrite={false}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
   );
 }
 
@@ -397,14 +432,6 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
       {/* Very low ambient light - makes unlit areas dark */}
       <ambientLight intensity={0.15} color="#2a2a3a" />
       
-      {/* Main top light - creates strong highlight on head */}
-      <directionalLight 
-        position={[0, 10, 3]} 
-        intensity={2.5} 
-        color="#ffffff"
-        castShadow
-      />
-      
       {/* Front fill light - illuminates face */}
       <directionalLight 
         position={[2, 3, 6]} 
@@ -428,6 +455,7 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
         decay={2}
       />
 
+      <GradientOverlay />
       <DogeModel mousePosition={mousePosition} scrollProgress={scrollProgress} />
       <SDOGEText scrollProgress={scrollProgress} />
 

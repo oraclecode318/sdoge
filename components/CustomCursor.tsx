@@ -51,10 +51,10 @@ export default function CustomCursor() {
       }}
     >
       <Image
-        src="/image/doge.jpg"
+        src="/image/cursor.png"
         alt="Dogecoin cursor"
-        width={24}
-        height={24}
+        width={60}
+        height={60}
         style={{
           width: '100%',
           height: '100%',

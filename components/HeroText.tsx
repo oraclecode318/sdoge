@@ -53,7 +53,6 @@ export default function HeroText({ scrollProgress }: HeroTextProps) {
         style={{
           ...calculateTextStyle(),
           color: '#ffffff',
-          fontFamily: 'var(--font-orbitron)',
         }}
       >
         sDOGE

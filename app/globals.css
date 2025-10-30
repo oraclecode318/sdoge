@@ -1,19 +1,49 @@
 @import "tailwindcss";
 
-/* Aktiv Grotesk Extended Font */
+/* Beltram Mono Test Font */
 @font-face {
-  font-family: 'Aktiv Grotesk Extended';
-  src: url('/fonts/AktivGroteskExtended-Bold.woff2') format('woff2'),
-       url('/fonts/AktivGroteskExtended-Bold.woff') format('woff');
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Aktiv Grotesk Extended';
-  src: url('/fonts/AktivGroteskExtended-Black.woff2') format('woff2'),
-       url('/fonts/AktivGroteskExtended-Black.woff') format('woff');
+  font-family: 'Beltram Mono Test';
+  src: url('/fonts/Beltram Mono Test/BeltramMonoTest-Black.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -23,12 +53,13 @@
   --background: #1a1a1a;
   --foreground: #ffffff;
   --yellow: #ffed4e;
+  --font-beltram: 'Beltram Mono Test', monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-beltram);
 }
 
 * {
@@ -51,7 +82,7 @@ html::-webkit-scrollbar {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-beltram);
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;

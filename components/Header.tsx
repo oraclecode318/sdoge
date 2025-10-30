@@ -76,7 +76,7 @@ export default function Header() {
         </motion.div>
 
         {/* Navigation - Desktop */}
-        <nav className="hidden md:flex items-center gap-8" style={{ fontFamily: 'var(--font-space-mono)' }}>
+        <nav className="hidden md:flex items-center gap-8">
           {['HOME', 'DOCS', 'COMMUNITY', 'INVEST'].map((item, i) => (
             <motion.a
               key={item}
@@ -109,7 +109,7 @@ export default function Header() {
           <motion.button
             ref={buttonRef}
             className="bg-[#ffd841] text-black rounded-[2px] cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
-            style={{ padding: '8px 12px', display: 'inline-block', fontFamily: 'var(--font-space-mono)' }}
+            style={{ padding: '8px 12px', display: 'inline-block' }}
             whileTap={{ scale: 0.95 }}
             data-text="STAKE AND EARN"
             onMouseEnter={handleButtonHover}
@@ -149,7 +149,6 @@ export default function Header() {
         }}
         transition={{ type: 'spring', damping: 20, stiffness: 100 }}
         className="fixed top-0 right-0 bottom-0 w-64 bg-[#1a1a1a] border-l border-yellow-400/20 z-40 md:hidden flex flex-col p-8 gap-6 pt-24"
-        style={{ fontFamily: 'var(--font-space-mono)' }}
       >
         {['HOME', 'DOCS', 'COMMUNITY', 'INVEST'].map((item) => (
           <a

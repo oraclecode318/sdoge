@@ -29,7 +29,13 @@ export default function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+          style={{
+            backgroundImage: 'url(/image/bg1.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -65,7 +71,7 @@ export default function LoadingScreen() {
             </div>
 
             {/* Progress Text */}
-            <p className="text-white/60 text-sm font-medium">
+            <p className="text-white text-sm font-normal tracking-wider uppercase">
               Loading {progress}%
             </p>
           </motion.div>

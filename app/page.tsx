@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 import Ticker from '@/components/Ticker';
 import HeroText from '@/components/HeroText';
-import ScrollIndicator from '@/components/ScrollIndicator';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
@@ -44,9 +43,6 @@ export default function Home() {
       {/* Header */}
       <Header />
 
-      {/* Scroll Indicator */}
-      {scrollProgress < 0.1 && <ScrollIndicator />}
-
       {/* Ticker at bottom */}
       <Ticker />
 
@@ -62,12 +58,12 @@ export default function Home() {
       </div>
 
       {/* Scroll Progress Indicator */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 h-1 bg-yellow-200/40" style={{ width: '25%' }}>
+      {/* <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 h-1 bg-yellow-200/40" style={{ width: '25%' }}>
         <div
           className="h-full bg-yellow-300/80 transition-all duration-100"
           style={{ width: `${scrollProgress * 100}%` }}
         />
-      </div>
+      </div> */}
       </main>
     </SmoothScroll>
   );
