@@ -101,10 +101,13 @@ class WaterDistortionEffect extends Effect {
 
 function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: number; y: number }, scrollProgress: number }) {
   const modelRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF('/3d/doge_v_4.glb');
+  const { scene, animations } = useGLTF('/3d/doge_v_4.glb');
   const [clonedScene] = useState(() => scene.clone());
 
   useEffect(() => {
+    if(animations && animations.length > 0) {
+      console.log('Found animations:', animations.length);
+    }
     // Traverse and adjust materials with color
     clonedScene.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {

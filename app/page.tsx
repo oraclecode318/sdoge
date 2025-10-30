@@ -32,7 +32,7 @@ export default function Home() {
       <CustomCursor />
       {/* <RippleEffect /> */}
       <LoadingScreen />
-      <main className="relative min-h-[300vh] bg-black overflow-x-hidden" style={{ cursor: 'none' }}>
+      <main className="relative min-h-[300vh] bg-black overflow-x-hidden">
       {/* Three.js Scene */}
       <Suspense fallback={null}>
         <Scene3D mousePosition={mousePosition} scrollProgress={scrollProgress} />
