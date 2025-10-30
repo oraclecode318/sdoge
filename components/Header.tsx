@@ -65,11 +65,14 @@ export default function Header() {
       >
         {/* Logo */}
         <motion.div
-          className="text-3xl font-black cursor-pointer hover:text-yellow-400 transition-colors text-white tracking-tight"
+          className="cursor-pointer"
           whileHover={{ scale: 1.05 }}
-          style={{ fontFamily: 'var(--font-space-mono)' }}
         >
-          sDOGE
+          <img 
+            src="/image/logo.png" 
+            alt="sDOGE" 
+            className="h-6 md:h-8 w-auto object-contain"
+          />
         </motion.div>
 
         {/* Navigation - Desktop */}
