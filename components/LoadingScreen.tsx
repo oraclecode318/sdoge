@@ -37,19 +37,22 @@ export default function LoadingScreen() {
             className="flex flex-col items-center gap-8"
           >
             {/* Logo */}
-            <motion.h1
-              className="text-6xl font-black text-yellow-400"
+            <motion.div
               animate={{
-                textShadow: [
-                  '0 0 20px rgba(255, 237, 78, 0.5)',
-                  '0 0 40px rgba(255, 237, 78, 0.8)',
-                  '0 0 20px rgba(255, 237, 78, 0.5)',
+                filter: [
+                  'drop-shadow(0 0 20px rgba(255, 237, 78, 0.5))',
+                  'drop-shadow(0 0 40px rgba(255, 237, 78, 0.8))',
+                  'drop-shadow(0 0 20px rgba(255, 237, 78, 0.5))',
                 ],
               }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              sDOGE
-            </motion.h1>
+              <img 
+                src="/image/logo.png" 
+                alt="sDOGE Logo" 
+                className="w-48 h-48 object-contain"
+              />
+            </motion.div>
 
             {/* Progress Bar */}
             <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden">

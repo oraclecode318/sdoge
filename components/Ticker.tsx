@@ -45,7 +45,7 @@ export default function Ticker() {
           {tickerText.split(' ').filter(word => word.length > 0).map((word, i) => (
             <span
               key={i}
-              style={{ margin: '0 5px', fontSize: '12px' }}
+              style={{ margin: '0 4px', fontSize: '14px' }}
               className={`font-normal text-sm ${
                 word.includes('$') ? 'text-white mx-5' : 'text-yellow-400 mx-3'
               }`}

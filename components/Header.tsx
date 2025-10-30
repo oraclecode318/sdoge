@@ -105,7 +105,7 @@ export default function Header() {
           </motion.a>
           <motion.button
             ref={buttonRef}
-            className="bg-[#ffd841] text-black cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
+            className="bg-[#ffd841] text-black rounded-[2px] cursor-pointer font-normal text-xs md:text-sm hover:bg-yellow-300 transition-all uppercase tracking-wider shadow-lg shadow-yellow-300/20"
             style={{ padding: '6px', display: 'inline-block' }}
             whileTap={{ scale: 0.95 }}
             data-text="STAKE AND EARN"

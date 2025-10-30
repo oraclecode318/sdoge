@@ -222,38 +222,46 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
   const textureRef = useRef<THREE.CanvasTexture | null>(null);
   const [textureReady, setTextureReady] = useState(false);
 
-  // Create canvas texture once fonts are loaded
+  // Create canvas texture with logo image
   useEffect(() => {
     const createTexture = async () => {
-      try {
-        // Wait for fonts to load
-        await document.fonts.ready;
-        // Extra wait to ensure Aktiv Grotesk Extended is definitely loaded
-        await document.fonts.load('900 220px "Aktiv Grotesk Extended"');
-      } catch (error) {
-        console.warn('Font loading issue:', error);
-      }
-
       const canvas = document.createElement('canvas');
       canvas.width = 1024;
       canvas.height = 256;
       const ctx = canvas.getContext('2d');
+      
       if (ctx) {
         // Clear canvas first
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Set font with fallback - using Aktiv Grotesk Extended
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 250px "Aktiv Grotesk Extended", "Space Grotesk", "Arial Black", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('sDOGE', canvas.width / 2, canvas.height / 2);
+        // Load and draw logo image
+        const img = new Image();
+        img.onload = () => {
+          // Calculate dimensions to fit logo centered in canvas
+          const aspectRatio = img.width / img.height;
+          const logoHeight = canvas.height * 0.9; // Use 90% of canvas height
+          const logoWidth = logoHeight * aspectRatio;
+          
+          // Center the logo
+          const x = (canvas.width - logoWidth) / 2;
+          const y = (canvas.height - logoHeight) / 2;
+          
+          ctx.drawImage(img, x, y, logoWidth, logoHeight);
+          
+          textureRef.current = new THREE.CanvasTexture(canvas);
+          textureRef.current.needsUpdate = true;
+          setTextureReady(true);
+          
+          console.log('sDOGE logo loaded on canvas');
+        };
         
-        console.log('sDOGE text created on canvas');
+        img.onerror = () => {
+          console.error('Failed to load logo image');
+          setTextureReady(false);
+        };
+        
+        img.src = '/image/logo.png';
       }
-      textureRef.current = new THREE.CanvasTexture(canvas);
-      textureRef.current.needsUpdate = true;
-      setTextureReady(true);
     };
 
     createTexture();
