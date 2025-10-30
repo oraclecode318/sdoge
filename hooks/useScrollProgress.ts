@@ -3,13 +3,25 @@
 import { useState, useEffect } from 'react';
 
 export function useScrollProgress() {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Initialize with current scroll position
+  const [scrollProgress, setScrollProgress] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      return maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    }
+    return 0;
+  });
   const [scrollVelocity, setScrollVelocity] = useState(0);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let lastTime = Date.now();
     let rafId: number;
+
+    // Set initial scroll progress immediately
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const initialProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    setScrollProgress(initialProgress);
 
     const updateScroll = () => {
       const currentScrollY = window.scrollY;

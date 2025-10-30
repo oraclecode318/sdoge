@@ -127,6 +127,10 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
           child.castShadow = true;
           child.receiveShadow = true;
           
+          // Enable transparency for fade-out effect
+          material.transparent = true;
+          material.opacity = 1;
+          
           // Make material respond to light properly
           material.needsUpdate = true;
         }
@@ -153,6 +157,26 @@ function DogeModel({ mousePosition, scrollProgress }: { mousePosition: { x: numb
 
     // Slight idle animation
     modelRef.current.position.y = -1.7 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+    
+    // Fade out based on scroll progress
+    // Start fading at 0.75, fully transparent by 0.95
+    const fadeStart = 0.75;
+    const fadeEnd = 0.95;
+    let opacity = 1;
+    
+    if (scrollProgress > fadeStart) {
+      opacity = 1 - Math.min((scrollProgress - fadeStart) / (fadeEnd - fadeStart), 1);
+    }
+    
+    // Update opacity for all materials
+    clonedScene.traverse((child: THREE.Object3D) => {
+      if (child instanceof THREE.Mesh) {
+        if (child.material) {
+          const material = child.material as THREE.MeshStandardMaterial;
+          material.opacity = opacity;
+        }
+      }
+    });
   });
 
   return (
@@ -220,10 +244,21 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
     textRef.current.scale.x = 1 + Math.sin(distortion) * 0.5;
     textRef.current.scale.y = 1 - Math.sin(distortion) * 0.3;
 
-    // Update shader uniforms for glitch effect
+    // Fade out based on scroll progress
+    // Start fading at 0.85 (after doge), fully transparent by 0.98
+    const fadeStart = 0.85;
+    const fadeEnd = 0.98;
+    let opacity = 1;
+    
+    if (scrollProgress > fadeStart) {
+      opacity = 1 - Math.min((scrollProgress - fadeStart) / (fadeEnd - fadeStart), 1);
+    }
+
+    // Update shader uniforms for glitch effect and opacity
     const material = textRef.current.material as THREE.ShaderMaterial;
     if (material.uniforms) {
       material.uniforms.uTime.value = state.clock.elapsedTime;
+      material.uniforms.uOpacity.value = opacity;
     }
   });
 
@@ -238,6 +273,7 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
       uTexture: { value: textureRef.current },
       uTime: { value: 0 },
       uGlitchIntensity: { value: 0.5 },
+      uOpacity: { value: 1.0 },
     },
     vertexShader: `
       varying vec2 vUv;
@@ -250,6 +286,7 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
       uniform sampler2D uTexture;
       uniform float uTime;
       uniform float uGlitchIntensity;
+      uniform float uOpacity;
       varying vec2 vUv;
       
       float random(vec2 st) {
@@ -282,8 +319,8 @@ function SDOGEText({ scrollProgress }: { scrollProgress: number }) {
         // Mix RGB separated channels
         vec3 finalColor = vec3(r, g, b);
         
-        // Use original alpha
-        float alpha = texColor.a;
+        // Use original alpha multiplied by uOpacity for fade effect
+        float alpha = texColor.a * uOpacity;
         
         gl_FragColor = vec4(finalColor, alpha);
       }
