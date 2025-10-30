@@ -530,9 +530,9 @@ function SceneContent({ mousePosition, scrollProgress }: { mousePosition: { x: n
     camera.position.y = -scrollProgress * 1;
     
     // Smooth background color transition based on scroll
-    // From dark gray (#1a1a1a) to light blue mixed (#4a6a8a)
+    // From dark gray (#1a1a1a) to darker blue mixed (#252a30)
     const startColor = new THREE.Color(0x1a1a1a); // Dark gray
-    const endColor = new THREE.Color(0x4a6a8a);   // Light blue-gray
+    const endColor = new THREE.Color(0x252a30);   // Darker blue-gray
     
     const currentColor = startColor.clone().lerp(endColor, Math.min(scrollProgress, 1));
     scene.background = currentColor;
