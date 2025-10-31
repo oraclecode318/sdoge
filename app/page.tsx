@@ -22,6 +22,11 @@ const Scene3D = dynamic(() => import('@/components/Scene3D'), {
   ),
 });
 
+// Dynamic import for AnalogDecayOverlay to avoid SSR issues
+const AnalogDecayOverlay = dynamic(() => import('@/components/AnalogDecayOverlay'), {
+  ssr: false,
+});
+
 export default function Home() {
   const mousePosition = useMousePosition();             
   const { scrollProgress, scrollVelocity } = useScrollProgress();
@@ -34,7 +39,7 @@ export default function Home() {
       <main className="relative min-h-[500vh] bg-black overflow-x-hidden">
       {/* Three.js Scene */}
       <Suspense fallback={null}>
-        <Scene3D mousePosition={mousePosition} scrollProgress={scrollProgress} />
+        <Scene3D mousePosition={mousePosition} scrollProgress={scrollProgress} scrollVelocity={scrollVelocity} />
       </Suspense>
 
       {/* Hero Text Overlay - Now rendered in 3D canvas */}
@@ -65,6 +70,11 @@ export default function Home() {
         />
       </div> */}
       </main>
+      
+      {/* Analog Decay Effect Overlay - applies to entire screen */}
+      <Suspense fallback={null}>
+        <AnalogDecayOverlay />
+      </Suspense>
     </SmoothScroll>
   );
 }
