@@ -9,7 +9,7 @@ interface GlitchEffectProps {
 export default function GlitchEffect({ intensity = 1 }: GlitchEffectProps) {
   const [isGlitching, setIsGlitching] = useState(false);
   const [glitchType, setGlitchType] = useState<'rgb' | 'shift' | 'flow' | 'scan' | 'all'>('all');
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     const triggerGlitch = () => {
