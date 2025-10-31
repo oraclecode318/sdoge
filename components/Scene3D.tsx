@@ -28,7 +28,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
   const translateY = -scrollProgress * 300; // Move up by 300px at full scroll
 
   // Calculate distortion amount based on scroll velocity
-  const distortionScale = Math.min(Math.abs(scrollVelocity) * 100, 200);
+  const distortionScale = Math.min(Math.abs(scrollVelocity) * 150, 300);
   
   // Use a ref to track time for smooth wave animation
   const timeRef = useRef(0);
@@ -48,73 +48,41 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
       {/* SVG Filter Definition for Water Wave Distortion */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
-          {/* Water Wave Filter */}
+          {/* Water Wave Filter - Big Waves */}
           <filter id="water-distortion-filter" x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-            {/* Create horizontal wave turbulence */}
+            {/* Create large smooth wave turbulence */}
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.008 0.03"
-              numOctaves="5"
-              seed="5"
-              stitchTiles="noStitch"
-              result="turbulence1"
+              baseFrequency="0.003 0.005"
+              numOctaves="2"
+              seed="7"
+              stitchTiles="stitch"
+              result="largeTurbulence"
             >
-              {/* Animate wave movement */}
+              {/* Slow wave animation for big rolling waves */}
               <animate
                 attributeName="baseFrequency"
-                dur="15s"
-                values="0.008 0.03;0.012 0.04;0.008 0.03"
+                dur="25s"
+                values="0.003 0.005;0.005 0.007;0.003 0.005"
                 repeatCount="indefinite"
               />
             </feTurbulence>
             
-            {/* Create vertical wave turbulence */}
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.03 0.008"
-              numOctaves="4"
-              seed="10"
-              stitchTiles="noStitch"
-              result="turbulence2"
-            >
-              {/* Animate opposite direction */}
-              <animate
-                attributeName="baseFrequency"
-                dur="12s"
-                values="0.03 0.008;0.04 0.012;0.03 0.008"
-                repeatCount="indefinite"
-              />
-            </feTurbulence>
+            {/* Apply heavy smoothing for big smooth waves */}
+            <feGaussianBlur in="largeTurbulence" stdDeviation="8" result="smoothBigWaves" />
             
-            {/* Combine both turbulences for complex wave pattern */}
-            <feComposite in="turbulence1" in2="turbulence2" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="combinedTurbulence" />
-            
-            {/* Smooth the waves */}
-            <feGaussianBlur in="combinedTurbulence" stdDeviation="3" result="smoothWaves" />
-            
-            {/* Apply displacement for wave effect */}
+            {/* Apply displacement for large wave effect */}
             <feDisplacementMap
               in="SourceGraphic"
-              in2="smoothWaves"
+              in2="smoothBigWaves"
               scale={distortionScale}
               xChannelSelector="R"
               yChannelSelector="G"
               result="displaced"
             />
             
-            {/* Add slight blur for underwater feel */}
-            <feGaussianBlur in="displaced" stdDeviation="0.3" result="blurred" />
-            
-            {/* Enhance the effect with color matrix for slight color shift */}
-            <feColorMatrix
-              in="blurred"
-              type="matrix"
-              values="1.02 0 0 0 0
-                      0 1.01 0 0 0
-                      0 0 1.03 0 0
-                      0 0 0 1 0"
-              result="colorAdjusted"
-            />
+            {/* Final smoothing for fluid motion */}
+            <feGaussianBlur in="displaced" stdDeviation="0.5" result="final" />
           </filter>
         </defs>
       </svg>
@@ -144,6 +112,20 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           zIndex: -1,
+        }}
+      />
+      
+      {/* Gradient Overlay - Behind Doge and Logo */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '488px',
+          background: 'linear-gradient(to bottom, #0a0a0a 0%, rgba(10, 10, 10, 0) 90%)',
+          zIndex: -0.5,
+          pointerEvents: 'none',
         }}
       />
       
