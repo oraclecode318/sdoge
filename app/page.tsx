@@ -27,6 +27,11 @@ const AnalogDecayOverlay = dynamic(() => import('@/components/AnalogDecayOverlay
   ssr: false,
 });
 
+// Dynamic import for GlitchEffect
+const GlitchEffect = dynamic(() => import('@/components/GlitchEffect'), {
+  ssr: false,
+});
+
 export default function Home() {
   const mousePosition = useMousePosition();             
   const { scrollProgress, scrollVelocity } = useScrollProgress();
@@ -74,6 +79,11 @@ export default function Home() {
       {/* Analog Decay Effect Overlay - applies to entire screen */}
       <Suspense fallback={null}>
         <AnalogDecayOverlay />
+      </Suspense>
+      
+      {/* Glitch Effect - triggers randomly every 4-10 seconds */}
+      <Suspense fallback={null}>
+        <GlitchEffect />
       </Suspense>
     </SmoothScroll>
   );
