@@ -5,6 +5,8 @@ import Spline from '@splinetool/react-spline';
 
 export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity }: { mousePosition: { x: number; y: number }, scrollProgress: number, scrollVelocity: number }) {
   const splineRef = useRef<any>(null);
+  const [isRgbSplitActive, setIsRgbSplitActive] = React.useState(false);
+  const rgbTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Handle Spline load event
   const onLoad = (spline: any) => {
@@ -20,6 +22,35 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
       // splineRef.current.setVariable('scrollProgress', scrollProgress);
     }
   }, [scrollProgress, mousePosition]);
+
+  // RGB Split Effect Random Trigger
+  useEffect(() => {
+    const triggerRgbSplit = () => {
+      // Activate RGB split
+      setIsRgbSplitActive(true);
+      
+      // Random duration between 100ms to 300ms
+      const effectDuration = Math.floor(Math.random() * 200) + 100;
+      
+      setTimeout(() => {
+        setIsRgbSplitActive(false);
+      }, effectDuration);
+      
+      // Schedule next RGB split randomly between 1-3 seconds
+      const nextDelay = Math.floor(Math.random() * 2000) + 1000;
+      rgbTimeoutRef.current = setTimeout(triggerRgbSplit, nextDelay);
+    };
+
+    // Start the RGB split cycle
+    const initialDelay = Math.floor(Math.random() * 2000) + 1000;
+    rgbTimeoutRef.current = setTimeout(triggerRgbSplit, initialDelay);
+
+    return () => {
+      if (rgbTimeoutRef.current) {
+        clearTimeout(rgbTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Calculate opacity, scale, and position based on scroll progress
   // scrollProgress is typically 0 to 1, where 0 is top and 1 is scrolled down
@@ -129,7 +160,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
         }}
       />
       
-      {/* Logo Image - Behind Doge Model at Head Part */}
+      {/* Logo Image - Behind Doge Model at Head Part with RGB Split Effect */}
       <div
         style={{
           position: 'absolute',
@@ -144,16 +175,127 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
           transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
         }}
       >
-        <img
-          src="/image/logo.png"
-          alt="Logo"
-          style={{
-            width: 'auto',
-            height: '200px',
-            objectFit: 'contain',
-          }}
-        />
+        {/* RGB Split Effect Container */}
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          {/* RGB Split Layers - Only show when active */}
+          {isRgbSplitActive && (
+            <>
+              {/* Red Channel */}
+              <img
+                src="/image/logo.png"
+                alt=""
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '-8px',
+                  width: 'auto',
+                  height: '200px',
+                  objectFit: 'contain',
+                  mixBlendMode: 'screen',
+                  filter: 'brightness(1.5)',
+                  opacity: 0.8,
+                }}
+                className="rgb-split-red"
+              />
+              
+              {/* Green Channel */}
+              <img
+                src="/image/logo.png"
+                alt=""
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: 'auto',
+                  height: '200px',
+                  objectFit: 'contain',
+                  mixBlendMode: 'screen',
+                  filter: 'brightness(1.5)',
+                  opacity: 0.8,
+                }}
+                className="rgb-split-green"
+              />
+              
+              {/* Blue Channel */}
+              <img
+                src="/image/logo.png"
+                alt=""
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '8px',
+                  width: 'auto',
+                  height: '200px',
+                  objectFit: 'contain',
+                  mixBlendMode: 'screen',
+                  filter: 'brightness(1.5)',
+                  opacity: 0.8,
+                }}
+                className="rgb-split-blue"
+              />
+            </>
+          )}
+          
+          {/* Main Logo */}
+          <img
+            src="/image/logo.png"
+            alt="Logo"
+            style={{
+              position: 'relative',
+              width: 'auto',
+              height: '200px',
+              objectFit: 'contain',
+              filter: isRgbSplitActive ? 'brightness(1.1)' : 'brightness(1)',
+            }}
+          />
+        </div>
       </div>
+      
+      {/* CSS for RGB Split Effect */}
+      <style jsx>{`
+        .rgb-split-red {
+          filter: brightness(1.5) contrast(1.2) url(#red-channel);
+        }
+        .rgb-split-green {
+          filter: brightness(1.5) contrast(1.2) url(#green-channel);
+        }
+        .rgb-split-blue {
+          filter: brightness(1.5) contrast(1.2) url(#blue-channel);
+        }
+      `}</style>
+      
+      {/* SVG Filters for RGB Channel Isolation */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <filter id="red-channel">
+            <feColorMatrix
+              type="matrix"
+              values="1 0 0 0 0
+                      0 0 0 0 0
+                      0 0 0 0 0
+                      0 0 0 1 0"
+            />
+          </filter>
+          <filter id="green-channel">
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0
+                      0 1 0 0 0
+                      0 0 0 0 0
+                      0 0 0 1 0"
+            />
+          </filter>
+          <filter id="blue-channel">
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0
+                      0 0 0 0 0
+                      0 0 1 0 0
+                      0 0 0 1 0"
+            />
+          </filter>
+        </defs>
+      </svg>
       
       {/* Spline Scene */}
       <div 
