@@ -59,7 +59,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
   const translateY = -scrollProgress * 300; // Move up by 300px at full scroll
 
   // Calculate distortion amount based on scroll velocity
-  const distortionScale = Math.min(Math.abs(scrollVelocity) * 150, 300);
+  const distortionScale = Math.min(Math.abs(scrollVelocity) * 200, 400);
   
   // Use a ref to track time for smooth wave animation
   const timeRef = useRef(0);
@@ -84,7 +84,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
             {/* Create large smooth wave turbulence */}
             <feTurbulence
               type="fractalNoise"
-              baseFrequency="0.003 0.005"
+              baseFrequency="0.002 0.004"
               numOctaves="2"
               seed="7"
               stitchTiles="stitch"
@@ -94,13 +94,13 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
               <animate
                 attributeName="baseFrequency"
                 dur="25s"
-                values="0.003 0.005;0.005 0.007;0.003 0.005"
+                values="0.002 0.004;0.004 0.006;0.002 0.004"
                 repeatCount="indefinite"
               />
             </feTurbulence>
             
             {/* Apply heavy smoothing for big smooth waves */}
-            <feGaussianBlur in="largeTurbulence" stdDeviation="8" result="smoothBigWaves" />
+            <feGaussianBlur in="largeTurbulence" stdDeviation="12" result="smoothBigWaves" />
             
             {/* Apply displacement for large wave effect */}
             <feDisplacementMap
