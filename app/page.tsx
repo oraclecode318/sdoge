@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
-import Ticker from '@/components/Ticker';
+// import Ticker from '@/components/Ticker';
 import HeroText from '@/components/HeroText';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
@@ -54,7 +54,7 @@ export default function Home() {
       <Header />
 
       {/* Ticker at bottom */}
-      <Ticker />
+      {/* <Ticker /> */}
 
       {/* Content sections for scroll */}
       <div className="relative z-20 pointer-events-none">

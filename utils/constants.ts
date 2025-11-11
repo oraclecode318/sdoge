@@ -42,6 +42,7 @@ export const LINKS = {
   docs: '#docs',
   community: '#community',
   invest: '#invest',
+  discord: 'https://discord.com',
 } as const;
 
 export const TICKER_DATA = {

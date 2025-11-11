@@ -311,7 +311,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
         }}
       >
         <Spline
-          scene="/scene.splinecode"
+          scene="https://prod.spline.design/nVuMjeQdKtJz-UEZ/scene.splinecode"
           onLoad={onLoad}
         />
       </div>
