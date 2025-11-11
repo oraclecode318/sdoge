@@ -8,6 +8,7 @@ import HeroText from '@/components/HeroText';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
+import SectionProgressBar from '@/components/SectionProgressBar';
 // import RippleEffect from '@/components/RippleEffect';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
@@ -41,7 +42,7 @@ export default function Home() {
       <CustomCursor />
       {/* <RippleEffect /> */}
       <LoadingScreen />
-      <main className="relative min-h-[500vh] bg-black overflow-x-hidden">
+      <main className="relative bg-black overflow-x-hidden">
       {/* Three.js Scene */}
       <Suspense fallback={null}>
         <Scene3D mousePosition={mousePosition} scrollProgress={scrollProgress} scrollVelocity={scrollVelocity} />
@@ -56,24 +57,55 @@ export default function Home() {
       {/* Ticker at bottom */}
       {/* <Ticker /> */}
 
-      {/* Content sections for scroll */}
-      <div className="relative z-20 pointer-events-none">
-        <div className="h-screen" />
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-white text-4xl font-bold opacity-0 animate-fade-in">
-            {/* Additional content sections can go here */}
-          </div>
+      {/* Section 1: Hero */}
+      <section id="section-1" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-4xl md:text-6xl font-bold text-center">
+          {/* <div className="opacity-0 animate-fade-in">Hero Section</div> */}
         </div>
-        <div className="h-screen" />
-      </div>
+      </section>
 
-      {/* Scroll Progress Indicator */}
-      {/* <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 h-1 bg-yellow-200/40" style={{ width: '25%' }}>
-        <div
-          className="h-full bg-yellow-300/80 transition-all duration-100"
-          style={{ width: `${scrollProgress * 100}%` }}
-        />
-      </div> */}
+      {/* Section 2 */}
+      <section id="section-2" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-3xl md:text-5xl font-normal text-center">
+          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">02</div>
+          <div>Section Two</div>
+        </div>
+      </section>
+
+      {/* Section 3 */}
+      <section id="section-3" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-3xl md:text-5xl font-normal text-center">
+          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">03</div>
+          <div>Section Three</div>
+        </div>
+      </section>
+
+      {/* Section 4 */}
+      <section id="section-4" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-3xl md:text-5xl font-normal text-center">
+          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">04</div>
+          <div>Section Four</div>
+        </div>
+      </section>
+
+      {/* Section 5 */}
+      <section id="section-5" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-3xl md:text-5xl font-normal text-center">
+          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">05</div>
+          <div>Section Five</div>
+        </div>
+      </section>
+
+      {/* Section 6 */}
+      <section id="section-6" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
+        <div className="text-white text-3xl md:text-5xl font-normal text-center">
+          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">06</div>
+          <div>Section Six</div>
+        </div>
+      </section>
+
+      {/* Section Progress Bar */}
+      <SectionProgressBar totalSections={6} startFromSection={2} />
       </main>
       
       {/* Analog Decay Effect Overlay - applies to entire screen */}
