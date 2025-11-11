@@ -1,18 +1,152 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Spline from '@splinetool/react-spline';
 
-export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity }: { mousePosition: { x: number; y: number }, scrollProgress: number, scrollVelocity: number }) {
+interface Scene3DProps {
+  mousePosition: { x: number; y: number };
+  scrollProgress: number;
+  scrollVelocity: number;
+  onAnimationsLoaded?: (animations: string[]) => void;
+  onPlayAnimation?: (animationName: string) => void;
+  onPlayRandomAnimation?: () => void;
+  onPlayAnimationByInput?: (input: string) => void;
+}
+
+export default function Scene3D({ 
+  mousePosition, 
+  scrollProgress, 
+  scrollVelocity, 
+  onAnimationsLoaded,
+  onPlayAnimation,
+  onPlayRandomAnimation,
+  onPlayAnimationByInput 
+}: Scene3DProps) {
   const splineRef = useRef<any>(null);
-  const [isRgbSplitActive, setIsRgbSplitActive] = React.useState(false);
+  const [isRgbSplitActive, setIsRgbSplitActive] = useState(false);
+  const [animations, setAnimations] = useState<string[]>([]);
+  const [currentAnimation, setCurrentAnimation] = useState<string | null>(null);
   const rgbTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Animation control functions
+  const stopAllAnimations = useCallback(() => {
+    if (!splineRef.current?._animationControls) return;
+
+    try {
+      const animControls = splineRef.current._animationControls;
+      Object.values(animControls.clipIdToAction).forEach((action: any) => {
+        action.stop();
+      });
+      setCurrentAnimation(null);
+      console.log('All animations stopped');
+    } catch (error) {
+      console.error('Error stopping animations:', error);
+    }
+  }, []);
+
+  const playAnimation = useCallback((animationName: string) => {
+    if (!splineRef.current?._animationControls) return;
+
+    try {
+      const animControls = splineRef.current._animationControls;
+      
+      // First, stop all animations
+      Object.values(animControls.clipIdToAction).forEach((action: any) => {
+        action.stop();
+      });
+
+      // Then play the requested animation
+      if (animControls.clipIdToAction[animationName]) {
+        const action = animControls.clipIdToAction[animationName];
+        action.reset(); // Reset to beginning
+        action.play();
+        setCurrentAnimation(animationName);
+        console.log('Playing animation:', animationName);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error playing animation:', error);
+    }
+    return false;
+  }, []);
+
+  const playRandomAnimation = useCallback(() => {
+    if (animations.length === 0) return;
+    
+    const randomIndex = Math.floor(Math.random() * animations.length);
+    const randomAnimation = animations[randomIndex];
+    playAnimation(randomAnimation);
+  }, [animations, playAnimation]);
+
+  const playAnimationByInput = useCallback((input: string) => {
+    if (!input || input.length < 8) return false;
+    
+    const searchTerm = input.substring(0, 8).toLowerCase();
+    const matchedAnimation = animations.find(anim => 
+      anim.toLowerCase().includes(searchTerm)
+    );
+    
+    if (matchedAnimation) {
+      playAnimation(matchedAnimation);
+      return true;
+    }
+    return false;
+  }, [animations, playAnimation]);
 
   // Handle Spline load event
   const onLoad = (spline: any) => {
     splineRef.current = spline;
     console.log('Spline scene loaded successfully');
+
+    // Get animations
+    try {
+      if (spline._animationControls) {
+        const animControls = spline._animationControls;
+        console.log('Animation Controls:', animControls);
+        
+        if (animControls.clipIdToAction) {
+          const animationNames = Object.keys(animControls.clipIdToAction);
+          console.log('Available animations:', animationNames);
+          setAnimations(animationNames);
+          
+          // Notify parent component about available animations
+          if (onAnimationsLoaded) {
+            onAnimationsLoaded(animationNames);
+          }
+          
+          // Auto-play first animation
+          if (animationNames.length > 0) {
+            setTimeout(() => {
+              playAnimation(animationNames[0]);
+            }, 1000); // Wait 1 second before auto-playing
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error accessing animations:', error);
+    }
   };
+
+  // Expose animation controls to parent component
+  useEffect(() => {
+    if (onPlayAnimation) {
+      // This will be called from parent component
+      // We need to create a way to trigger animations from outside
+    }
+  }, [onPlayAnimation]);
+
+  // Handle external animation triggers
+  useEffect(() => {
+    // Store functions in a global object for easier access
+    (window as any).scene3DControls = {
+      playRandomAnimation,
+      playAnimationByInput,
+      playAnimation,
+      stopAllAnimations,
+      animations,
+      currentAnimation
+    };
+  }, [playRandomAnimation, playAnimationByInput, playAnimation, stopAllAnimations, animations, currentAnimation]);
 
   // Optional: You can interact with the Spline scene based on scroll/mouse
   useEffect(() => {
@@ -311,7 +445,7 @@ export default function Scene3D({ mousePosition, scrollProgress, scrollVelocity 
         }}
       >
         <Spline
-          scene="https://prod.spline.design/nVuMjeQdKtJz-UEZ/scene.splinecode"
+          scene="/scene.splinecode"
           onLoad={onLoad}
         />
       </div>
