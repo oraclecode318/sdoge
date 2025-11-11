@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 // import Ticker from '@/components/Ticker';
 import HeroText from '@/components/HeroText';
+import HeroInfoBoxes from '@/components/HeroInfoBoxes';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
@@ -62,6 +63,8 @@ export default function Home() {
         <div className="text-white text-4xl md:text-6xl font-bold text-center">
           {/* <div className="opacity-0 animate-fade-in">Hero Section</div> */}
         </div>
+        {/* Left and Right Info Boxes with Ruler Milestones */}
+        <HeroInfoBoxes />
       </section>
 
       {/* Section 2 */}
