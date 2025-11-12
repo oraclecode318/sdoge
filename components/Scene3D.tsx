@@ -13,20 +13,26 @@ interface Scene3DProps {
   onPlayAnimationByInput?: (input: string) => void;
 }
 
-export default function Scene3D({
-  mousePosition,
-  scrollProgress,
-  scrollVelocity,
+export default function Scene3D({ 
+  mousePosition, 
+  scrollProgress, 
+  scrollVelocity, 
   onAnimationsLoaded,
   onPlayAnimation,
   onPlayRandomAnimation,
-  onPlayAnimationByInput
+  onPlayAnimationByInput 
 }: Scene3DProps) {
   const splineRef = useRef<any>(null);
   const [isRgbSplitActive, setIsRgbSplitActive] = useState(false);
   const [animations, setAnimations] = useState<string[]>([]);
   const [currentAnimation, setCurrentAnimation] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const rgbTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Ensure consistent hydration - only show scroll-dependent content after client-side mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Animation control functions
   const stopAllAnimations = useCallback(() => {
@@ -401,7 +407,7 @@ export default function Scene3D({
         )}
 
       {/* Section 3+ Headline Text with RGB Split Effect - Smooth Transition */}
-      {scrollProgress >= section2Threshold && (
+      {isMounted && scrollProgress >= section2Threshold && (
       <div
         style={{
           position: 'absolute',
