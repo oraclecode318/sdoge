@@ -75,6 +75,14 @@ export default function Header() {
     scrambleText(element, originalText, 1.2);
   };
 
+  const handleInstitutionalTextHover = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const element = e.currentTarget;
+    const originalText = 'INSTITUTIONAL';
+
+    // Only typing scramble effect (no flip)
+    scrambleText(element, originalText, 1.2);
+  };
+
   const handleButtonHover = () => {
     if (!buttonRef.current) return;
     const originalText = buttonRef.current.getAttribute('data-text') || buttonRef.current.textContent || '';
@@ -134,19 +142,22 @@ export default function Header() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * 2 + 0.3 }}
-              data-text="INSTITUTIONAL"
-              onMouseEnter={handleMenuItemHover}
               style={{ display: 'inline-flex' }}
               aria-haspopup="true"
               aria-expanded={isInstitutionalOpen}
             >
-              <span>INSTITUTIONAL</span>
+              <span 
+                onMouseEnter={handleInstitutionalTextHover}
+                style={{ display: 'inline-block' }}
+              >
+                INSTITUTIONAL
+              </span>
               <motion.span
                 animate={{ rotate: isInstitutionalOpen ? 90 : 0 }}
                 transition={{ duration: 0.15 }}
-                className="inline-block"
+                className="inline-block ml-1"
               >
-                <FaChevronRight size={10} />
+                <FaChevronRight size={10} style={{marginBottom: '2px'}} />
               </motion.span>
             </motion.a>
 
@@ -158,7 +169,10 @@ export default function Header() {
                 pointerEvents: isInstitutionalOpen ? 'auto' : 'none',
               }}
               transition={{ duration: 0.15 }}
-              className="absolute left-0 top-full mt-2 min-w-[240px] min-h-[68px] rounded-md border-2 border-dotted flex flex-col justify-center border-gray-200/80 bg-[#0b0b0b] shadow-xl shadow-black/30 py-4 px-6 gap-1"
+              style={{
+                padding: '24px'
+              }}
+              className="absolute left-0 top-full mt-2 min-w-[300px] min-h-[68px] rounded-md border-2 border-dotted flex flex-col justify-center border-gray-100/50 bg-[#0b0b0b] shadow-xl shadow-black/30 py-4 px-6 gap-1"
             >
               <button
                 onClick={(e) => {
@@ -166,10 +180,11 @@ export default function Header() {
                   setIsModalOpen(true);
                   setIsInstitutionalOpen(false);
                 }}
-                style={{ paddingLeft: '8px' }}
-                className="block w-full text-left pl-4 text-sm text-white/90 hover:text-black hover:bg-[#ffd841] transition-colors uppercase tracking-wider cursor-pointer"
+                className="flex items-center justify-between block w-full text-left text-sm text-white/90 hover:text-black hover:bg-[#ffd841] transition-colors uppercase tracking-wider cursor-pointer"
               >
-                INSTITUTIONAL HOLDERS
+                INSTITUTIONAL HOLDERS 
+                <FaChevronRight size={10} style={{marginBottom: '2px'}} />
+
               </button>
               <button
                 onClick={(e) => {
@@ -177,10 +192,11 @@ export default function Header() {
                   setIsTransparencyModalOpen(true);
                   setIsInstitutionalOpen(false);
                 }}
-                style={{ paddingLeft: '8px' }}
-                className="block w-full text-left pl-4 text-sm text-white/90 hover:text-black hover:bg-[#ffd841] transition-colors uppercase tracking-wider cursor-pointer"
+                className="flex items-center justify-between block w-full text-left text-sm text-white/90 hover:text-black hover:bg-[#ffd841] transition-colors uppercase tracking-wider cursor-pointer"
               >
                 TRANSAPRENCY & RISK
+                <FaChevronRight size={10} style={{marginBottom: '2px'}} />
+
               </button>
             </motion.div>
           </div>

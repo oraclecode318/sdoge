@@ -61,6 +61,9 @@ export default function Home() {
   const [animationInput, setAnimationInput] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [inputError, setInputError] = useState(false);
+  const [inputSuccess, setInputSuccess] = useState(false);
 
   // Animation control functions
   const handleAnimationsLoaded = useCallback((animations: string[]) => {
@@ -84,9 +87,16 @@ export default function Home() {
     if (animationInput && (window as any).scene3DControls) {
       const success = (window as any).scene3DControls.playAnimationByInput(animationInput);
       if (!success) {
-        alert('No animation found matching the first 8 characters: ' + animationInput.substring(0, 8));
+        setInputError(true);
+        setInputSuccess(false);
+        // Clear error after 3 seconds
+        setTimeout(() => setInputError(false), 3000);
       } else {
+        setInputSuccess(true);
+        setInputError(false);
         setAnimationInput(''); // Clear input on success
+        // Clear success state after 2 seconds
+        setTimeout(() => setInputSuccess(false), 2000);
       }
     }
   }, [animationInput]);
@@ -107,10 +117,10 @@ export default function Home() {
   }, [totalPages]);
 
   // Animation icons using React Icons
-  const getAnimationIcon = useCallback((index: number) => {
-    const IconComponent = [FaPlay, FaMusic, FaGamepad, FaRocket, FaStar, FaBolt, FaFire, FaMagic, FaDiceThree, FaPause][index % 10];
-    return <IconComponent className="text-sm" />;
-  }, []);
+    const getAnimationIcon = useCallback((index: number) => {
+      const IconComponent = [FaPlay, FaMusic, FaGamepad, FaRocket, FaStar, FaBolt, FaFire, FaMagic, FaDiceThree, FaPause][index % 10];
+      return <IconComponent className="text-sm text-white/50 hover:text-[#ffd841]" />;
+    }, []);
 
   return (
     <SmoothScroll>
@@ -198,7 +208,7 @@ export default function Home() {
                     onMouseEnter={() => !currentPage ? null : setHoveredButton('prev-page')}
                     onMouseLeave={() => setHoveredButton(null)}
                     disabled={currentPage === 0}
-                    className="w-10 h-10 cursor-pointer rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-[#ffd841] hover:text-black transition-all duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-10 h-10 cursor-pointer rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <FaChevronLeft className="text-sm" />
                   </button>
@@ -215,7 +225,7 @@ export default function Home() {
                           onClick={() => handlePlayAnimation(animation)}
                           onMouseEnter={() => setHoveredButton(buttonId)}
                           onMouseLeave={() => setHoveredButton(null)}
-                          className="w-10 h-10 border-2 border-white/80 border-dotted cursor-pointer mx-2 space-x-2 rounded-full bg-transparent text-white hover:bg-[#b6b3a6] hover:text-black hover:scale-110 transition-all duration-300 flex items-center justify-center text-lg"
+                          className="w-10 h-10 border-2 border-white/80 border-dotted cursor-pointer mx-2 space-x-2 rounded-full bg-transparent text-white hover:text-[#ffd841] hover:scale-110 hover:border-[#ffd841] transition-all duration-300 flex items-center justify-center text-lg"
                         >
                           {getAnimationIcon(actualIndex)}
                         </button>
@@ -247,7 +257,7 @@ export default function Home() {
                     onMouseEnter={() => (currentPage >= totalPages - 1) ? null : setHoveredButton('next-page')}
                     onMouseLeave={() => setHoveredButton(null)}
                     disabled={currentPage >= totalPages - 1}
-                    className="w-10 h-10 cursor-pointer rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-[#ffd841] hover:text-black transition-all duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-10 h-10 cursor-pointer rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <FaChevronRight className="text-sm" />
                   </button>
@@ -257,24 +267,42 @@ export default function Home() {
 
             {/* Input Field and Send Button - Right Bottom */}
             <div 
-              className="fixed border-2 border-white/80 border-dotted rounded-md bottom-6 right-8 flex items-center space-x-2 pointer-events-auto z-30 transition-all duration-300"
+              className={`fixed border-2 border-dotted rounded-md bottom-6 right-8 flex items-center space-x-2 pointer-events-auto z-30 transition-all duration-300 ${
+                inputError 
+                  ? 'border-[#FF4141]' 
+                  : inputSuccess 
+                    ? 'border-white' 
+                    : isInputFocused 
+                      ? 'border-[#FFD841]' 
+                      : 'border-white/50'
+              }`}
               style={{
                 opacity: Math.max(0, 1 - (scrollProgress / 0.15)),
                 transform: `translateY(${scrollProgress * 50}px) scale(${Math.max(0.8, 1 - (scrollProgress / 0.15) * 0.2)})`,
                 padding: '8px 12px',
+                width: '300px',
+                height: '60px',
               }}
             >
               <input
                 type="text"
                 value={animationInput}
-                onChange={(e) => setAnimationInput(e.target.value)}
+                onChange={(e) => {
+                  setAnimationInput(e.target.value);
+                  // Clear error/success states when user starts typing
+                  setInputError(false);
+                  setInputSuccess(false);
+                }}
                 onKeyPress={(e) => e.key === 'Enter' && handleAnimationInputSubmit()}
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
                 placeholder="Enter secret code..."
-                className="backdrop-blur-sm border-none min-w-20 text-white rounded-lg focus:outline-none focus:border-[#f2f2f2] focus:ring-1 focus:ring-[#ffd841] text-sm w-40"
+                className="backdrop-blur-sm border-none min-w-60 text-white rounded-sm focus:outline-none focus:border-none focus:ring-0 focus:ring-none text-sm w-40"
                 style={{
                   backgroundColor: 'transparent',
-                  padding: '4px 12px',
-                  marginRight: '8px'
+                  padding: '4px',
+                  marginRight: '8px',
+                  fontFamily: 'var(--font-aktiv)',
                 }}
                 maxLength={50}
               />
@@ -296,8 +324,8 @@ export default function Home() {
                 {hoveredButton === 'send-button' && animationInput.trim() && (
                   <div style={{
                     padding: '16px',
-                    width: '300px',
-                    height: '60px',
+                    width: '100px',
+                    height: '40px',
                     fontSize: '14px',
                     bottom: 'calc(100% + 12px)'
                   }} className="absolute right-0 bg-[#0b0b0b] border-2 border-dotted border-white/80 text-[#ffffff] font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 flex items-center justify-center">
@@ -309,6 +337,20 @@ export default function Home() {
                 )}
               </div>
             </div>
+            
+            {/* Error Message */}
+            {inputError && (
+              <div 
+                className="fixed bottom-1 right-8 text-[#FF4141] text-sm pointer-events-none z-30 transition-all duration-300"
+                style={{
+                  opacity: Math.max(0, 1 - (scrollProgress / 0.15)),
+                  transform: `translateY(${scrollProgress * 50}px) scale(${Math.max(0.8, 1 - (scrollProgress / 0.15) * 0.2)})`,
+                  fontFamily: '"Beltram Mono Test", monospace',
+                }}
+              >
+                WRONG CODE
+              </div>
+            )}
           </>
         )}
       </section>

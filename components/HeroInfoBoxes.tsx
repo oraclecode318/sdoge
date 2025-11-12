@@ -21,7 +21,7 @@ function HeroInfoBox({ position, title, value }: HeroInfoBoxProps) {
           return (
             <div
               key={i}
-              className={`bg-[#ffffff]/80 ${isLongTick ? 'w-4 h-0.5' : 'w-3 h-0.25'}`}
+              className={`${isLongTick ? 'w-5 h-0.25 bg-[#ffffff]' : 'w-2.5 h-0.25 bg-[#ffffff]/50'}`}
               style={{
                 marginLeft: position === 'left' ? '0' : 'auto',
                 marginRight: position === 'right' ? '0' : 'auto',
@@ -35,14 +35,14 @@ function HeroInfoBox({ position, title, value }: HeroInfoBoxProps) {
       <div 
         className="text-[#ffd841] flex flex-col justify-between h-full"
         style={{
-          marginLeft: position === 'left' ? '1.5rem' : '0',
-          marginRight: position === 'right' ? '1.5rem' : '0',
+          marginLeft: position === 'left' ? '1.8rem' : '0',
+          marginRight: position === 'right' ? '1.8rem' : '0',
         }}
       >
-        <div className="text-xs md:text-sm font-normal uppercase leading-relaxed">
+        <div className="text-xs md:text-sm font-normal uppercase leading-relaxed" style={{marginTop: '-12px'}}>
           {title}
         </div>
-        <div className="text-xs md:text-sm font-normal text-right">
+        <div className={`text-xs md:text-sm font-normal ${position === 'left' ? 'text-left' : 'text-right'}`} style={{marginBottom: '-12px'}}>
           <span className="text-white">{value.split(' ')[0]}</span>
           {value.split(' ').length > 1 && (
             <span className="text-[#ffd841]"> {value.split(' ').slice(1).join(' ')}</span>
