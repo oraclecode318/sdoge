@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import HeroText from '@/components/HeroText';
 import HeroInfoBoxes from '@/components/HeroInfoBoxes';
 import Section2Content from '@/components/Section2Content';
+import Section3YieldPanel from '@/components/Section3YieldPanel';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
@@ -127,8 +128,8 @@ export default function Home() {
         />
       </Suspense>
 
-      {/* Hero Text Overlay - Now rendered in 3D canvas */}
-      {/* <HeroText scrollProgress={scrollProgress} /> */}
+      {/* Hero Text Overlay - Enabled for hero section */}
+      <HeroText scrollProgress={scrollProgress} />
 
       {/* Header */}
       <Header />
@@ -331,10 +332,7 @@ export default function Home() {
 
       {/* Section 3 */}
       <section id="section-3" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
-        <div className="text-white text-3xl md:text-5xl font-normal text-center">
-          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">03</div>
-          <div>Section Three</div>
-        </div>
+        <Section3YieldPanel scrollProgress={scrollProgress} />
       </section>
 
       {/* Section 4 */}

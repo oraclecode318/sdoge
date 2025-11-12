@@ -1,5 +1,38 @@
 @import "tailwindcss";
 
+/* AktivGrotesk Ex Font Family */
+@font-face {
+  font-family: 'Aktiv Grotesk Ex Trial';
+  src: url('/fonts/TrialStaticFonts/AktivGroteskEx_Trial_Rg.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aktiv Grotesk Ex Trial';
+  src: url('/fonts/TrialStaticFonts/AktivGroteskEx_Trial_Md.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aktiv Grotesk Ex Trial';
+  src: url('/fonts/TrialStaticFonts/AktivGroteskEx_Trial_XBd.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aktiv Grotesk Ex Trial';
+  src: url('/fonts/TrialStaticFonts/AktivGroteskEx_Trial_XBdIt.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* Beltram Mono Test Font */
 @font-face {
   font-family: 'Beltram Mono Test';
@@ -54,6 +87,7 @@
   --foreground: #ffffff;
   --yellow: #ffed4e;
   --font-beltram: 'Beltram Mono Test', monospace;
+  --font-aktiv: 'Aktiv Grotesk Ex Trial', sans-serif;
 }
 
 @theme inline {

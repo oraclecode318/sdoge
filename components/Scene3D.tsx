@@ -13,14 +13,14 @@ interface Scene3DProps {
   onPlayAnimationByInput?: (input: string) => void;
 }
 
-export default function Scene3D({ 
-  mousePosition, 
-  scrollProgress, 
-  scrollVelocity, 
+export default function Scene3D({
+  mousePosition,
+  scrollProgress,
+  scrollVelocity,
   onAnimationsLoaded,
   onPlayAnimation,
   onPlayRandomAnimation,
-  onPlayAnimationByInput 
+  onPlayAnimationByInput
 }: Scene3DProps) {
   const splineRef = useRef<any>(null);
   const [isRgbSplitActive, setIsRgbSplitActive] = useState(false);
@@ -49,7 +49,7 @@ export default function Scene3D({
 
     try {
       const animControls = splineRef.current._animationControls;
-      
+
       // First, stop all animations
       Object.values(animControls.clipIdToAction).forEach((action: any) => {
         action.stop();
@@ -72,7 +72,7 @@ export default function Scene3D({
 
   const playRandomAnimation = useCallback(() => {
     if (animations.length === 0) return;
-    
+
     const randomIndex = Math.floor(Math.random() * animations.length);
     const randomAnimation = animations[randomIndex];
     playAnimation(randomAnimation);
@@ -80,12 +80,12 @@ export default function Scene3D({
 
   const playAnimationByInput = useCallback((input: string) => {
     if (!input || input.length < 8) return false;
-    
+
     const searchTerm = input.substring(0, 8).toLowerCase();
-    const matchedAnimation = animations.find(anim => 
+    const matchedAnimation = animations.find(anim =>
       anim.toLowerCase().includes(searchTerm)
     );
-    
+
     if (matchedAnimation) {
       playAnimation(matchedAnimation);
       return true;
@@ -103,17 +103,17 @@ export default function Scene3D({
       if (spline._animationControls) {
         const animControls = spline._animationControls;
         console.log('Animation Controls:', animControls);
-        
+
         if (animControls.clipIdToAction) {
           const animationNames = Object.keys(animControls.clipIdToAction);
           console.log('Available animations:', animationNames);
           setAnimations(animationNames);
-          
+
           // Notify parent component about available animations
           if (onAnimationsLoaded) {
             onAnimationsLoaded(animationNames);
           }
-          
+
           // Auto-play first animation
           if (animationNames.length > 0) {
             setTimeout(() => {
@@ -162,14 +162,14 @@ export default function Scene3D({
     const triggerRgbSplit = () => {
       // Activate RGB split
       setIsRgbSplitActive(true);
-      
+
       // Random duration between 100ms to 300ms
       const effectDuration = Math.floor(Math.random() * 200) + 100;
-      
+
       setTimeout(() => {
         setIsRgbSplitActive(false);
       }, effectDuration);
-      
+
       // Schedule next RGB split randomly between 1-3 seconds
       const nextDelay = Math.floor(Math.random() * 2000) + 1000;
       rgbTimeoutRef.current = setTimeout(triggerRgbSplit, nextDelay);
@@ -190,21 +190,27 @@ export default function Scene3D({
   // scrollProgress is typically 0 to 1, where 0 is top and 1 is scrolled down
   // Keep size constant until section 2 (around 0.33 scroll progress)
   const section2Threshold = 0.33; // End of section 2 (2 out of 6 sections)
-  
+  const section3Threshold = 0.4; // Start of section 3 (40% progress)
+
   // Only start scaling after section 2
   const adjustedScrollProgress = Math.max(0, scrollProgress - section2Threshold);
   const normalizedScrollProgress = adjustedScrollProgress / (1 - section2Threshold);
-  
+
   const opacity = Math.max(0, 1 - normalizedScrollProgress * 2); // Fade out faster
-  const scale = scrollProgress <= section2Threshold ? 1 : Math.max(0.3, 1 - normalizedScrollProgress * 1.5); // Keep original size until section 2
-  const translateY = -scrollProgress * 300; // Move up by 300px at full scroll
+  const scale = scrollProgress <= section2Threshold ? 1.1 : Math.max(0.3, 1.1 - normalizedScrollProgress * 1.5); // Smaller size (1.0) until section 2
+  const translateY = scrollProgress <= section2Threshold ? -scrollProgress * 300 : -scrollProgress * 250 + 50; // Move up by 250px at full scroll, offset by 50px down
+
+  // Smooth doge positioning transition from center to left
+  const dogeTransitionRange = section3Threshold - section2Threshold; // 0.07 range
+  const dogeTransitionProgress = Math.min(1, Math.max(0, (scrollProgress - section2Threshold) / dogeTransitionRange));
+  const dogeTranslateX = `${dogeTransitionProgress * -25}%`; // Smoothly move from 0% to -25%
 
   // Calculate distortion amount based on scroll velocity
   const distortionScale = Math.min(Math.abs(scrollVelocity) * 200, 400);
-  
+
   // Use a ref to track time for smooth wave animation
   const timeRef = useRef(0);
-  
+
   useEffect(() => {
     let animationId: number;
     const animate = () => {
@@ -239,10 +245,10 @@ export default function Scene3D({
                 repeatCount="indefinite"
               />
             </feTurbulence>
-            
+
             {/* Apply heavy smoothing for big smooth waves */}
             <feGaussianBlur in="largeTurbulence" stdDeviation="12" result="smoothBigWaves" />
-            
+
             {/* Apply displacement for large wave effect */}
             <feDisplacementMap
               in="SourceGraphic"
@@ -252,7 +258,7 @@ export default function Scene3D({
               yChannelSelector="G"
               result="displaced"
             />
-            
+
             {/* Final smoothing for fluid motion */}
             <feGaussianBlur in="displaced" stdDeviation="0.5" result="final" />
           </filter>
@@ -271,129 +277,268 @@ export default function Scene3D({
           willChange: 'filter',
         }}
       >
-      {/* Background Image */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: 'url(/image/bg1.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: -1,
-        }}
-      />
-      
-      {/* Gradient Overlay - Behind Doge and Logo */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '488px',
-          background: 'linear-gradient(to bottom, #0a0a0a 0%, rgba(10, 10, 10, 0) 90%)',
-          zIndex: -0.5,
-          pointerEvents: 'none',
-        }}
-      />
-      
-      {/* Logo Image - Behind Doge Model at Head Part with RGB Split Effect */}
+        {/* Background Image */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: 'url(/image/bg1.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            zIndex: -1,
+          }}
+        />
+
+        {/* Gradient Overlay - Behind Doge and Logo */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '488px',
+            background: 'linear-gradient(to bottom, #0a0a0a 0%, rgba(10, 10, 10, 0) 90%)',
+            zIndex: -0.5,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Logo Image - Behind Doge Model at Head Part with RGB Split Effect - Hidden in section 3+ */}
+        {scrollProgress < section3Threshold && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '10%',
+              left: '50%',
+              transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
+              width: 'auto',
+              height: 'auto',
+              zIndex: 0,
+              pointerEvents: 'none',
+              opacity: opacity,
+              transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
+            }}
+          >
+            {/* RGB Split Effect Container */}
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              {/* RGB Split Layers - Only show when active */}
+              {isRgbSplitActive && (
+                <>
+                  {/* Red Channel */}
+                  <img
+                    src="/image/logo.png"
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-8px',
+                      width: 'auto',
+                      height: '200px',
+                      objectFit: 'contain',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                    }}
+                    className="rgb-split-red"
+                  />
+
+                  {/* Green Channel */}
+                  <img
+                    src="/image/logo.png"
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: 'auto',
+                      height: '200px',
+                      objectFit: 'contain',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                    }}
+                    className="rgb-split-green"
+                  />
+
+                  {/* Blue Channel */}
+                  <img
+                    src="/image/logo.png"
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '8px',
+                      width: 'auto',
+                      height: '200px',
+                      objectFit: 'contain',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                    }}
+                    className="rgb-split-blue"
+                  />
+                </>
+              )}
+
+              {/* Main Logo */}
+              <img
+                src="/image/logo.png"
+                alt="Logo"
+                style={{
+                  position: 'relative',
+                  width: 'auto',
+                  height: '200px',
+                  objectFit: 'contain',
+                  filter: isRgbSplitActive ? 'brightness(1.1)' : 'brightness(1)',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+      {/* Section 3+ Headline Text with RGB Split Effect - Smooth Transition */}
+      {scrollProgress >= section2Threshold && (
       <div
         style={{
           position: 'absolute',
           top: '10%',
           left: '50%',
-          transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
+          transform: `translateX(-50%) translateY(${translateY + (1 - dogeTransitionProgress) * 30}px) scale(${scale * (0.9 + dogeTransitionProgress * 0.1)})`,
           width: 'auto',
           height: 'auto',
           zIndex: 0,
           pointerEvents: 'none',
-          opacity: opacity,
+          opacity: opacity * dogeTransitionProgress,
           transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
         }}
       >
         {/* RGB Split Effect Container */}
-        <div style={{ position: 'relative', display: 'inline-block' }}>
-          {/* RGB Split Layers - Only show when active */}
-          {isRgbSplitActive && (
-            <>
-              {/* Red Channel */}
-              <img
-                src="/image/logo.png"
-                alt=""
+        <div style={{ position: 'relative', display: 'inline-block', fontFamily:'var(--font-aktiv)' }}>
+              {/* RGB Split Layers - Only show when active */}
+              {isRgbSplitActive && (
+                <>
+                  {/* Red Channel */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-8px',
+                      width: 'auto',
+                      height: '200px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'Aktiv Grotesk Ex Trial',
+                      fontWeight: '800',
+                      fontStyle: 'italic',
+                      fontSize: '122px',
+                      lineHeight: '100%',
+                      letterSpacing: '-4.28px',
+                      textAlign: 'center',
+                      color: '#ff0000',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                      whiteSpace: 'nowrap',
+                    }}
+                    className="rgb-split-red"
+                  >
+                    Mint sDOGE
+                  </div>
+
+                  {/* Green Channel */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: 'auto',
+                      height: '200px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'Aktiv Grotesk Ex Trial',
+                      fontWeight: '800',
+                      fontStyle: 'italic',
+                      fontSize: '122px',
+                      lineHeight: '100%',
+                      letterSpacing: '-4.28px',
+                      textAlign: 'center',
+                      color: '#00ff00',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                      whiteSpace: 'nowrap',
+                    }}
+                    className="rgb-split-green"
+                  >
+                    Mint sDOGE
+                  </div>
+
+                  {/* Blue Channel */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '8px',
+                      width: 'auto',
+                      height: '200px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'Aktiv Grotesk Ex Trial',
+                      fontWeight: '800',
+                      fontStyle: 'italic',
+                      fontSize: '122px',
+                      lineHeight: '100%',
+                      letterSpacing: '-4.28px',
+                      textAlign: 'center',
+                      color: '#0000ff',
+                      mixBlendMode: 'screen',
+                      filter: 'brightness(1.5)',
+                      opacity: 0.8,
+                      whiteSpace: 'nowrap',
+                    }}
+                    className="rgb-split-blue"
+                  >
+                    Mint sDOGE
+                  </div>
+                </>
+              )}
+
+              {/* Main Text */}
+              <div
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '-8px',
+                  position: 'relative',
                   width: 'auto',
                   height: '200px',
-                  objectFit: 'contain',
-                  mixBlendMode: 'screen',
-                  filter: 'brightness(1.5)',
-                  opacity: 0.8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'Aktiv Grotesk Ex Trial',
+                  fontWeight: '800',
+                  fontStyle: 'italic',
+                  fontSize: '122px',
+                  lineHeight: '100%',
+                  letterSpacing: '-4.28px',
+                  textAlign: 'center',
+                  color: '#ffffff',
+                  filter: isRgbSplitActive ? 'brightness(1.1)' : 'brightness(1)',
+                  whiteSpace: 'nowrap',
                 }}
-                className="rgb-split-red"
-              />
-              
-              {/* Green Channel */}
-              <img
-                src="/image/logo.png"
-                alt=""
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: 'auto',
-                  height: '200px',
-                  objectFit: 'contain',
-                  mixBlendMode: 'screen',
-                  filter: 'brightness(1.5)',
-                  opacity: 0.8,
-                }}
-                className="rgb-split-green"
-              />
-              
-              {/* Blue Channel */}
-              <img
-                src="/image/logo.png"
-                alt=""
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '8px',
-                  width: 'auto',
-                  height: '200px',
-                  objectFit: 'contain',
-                  mixBlendMode: 'screen',
-                  filter: 'brightness(1.5)',
-                  opacity: 0.8,
-                }}
-                className="rgb-split-blue"
-              />
-            </>
-          )}
-          
-          {/* Main Logo */}
-          <img
-            src="/image/logo.png"
-            alt="Logo"
-            style={{
-              position: 'relative',
-              width: 'auto',
-              height: '200px',
-              objectFit: 'contain',
-              filter: isRgbSplitActive ? 'brightness(1.1)' : 'brightness(1)',
-            }}
-          />
-        </div>
-      </div>
-      
-      {/* CSS for RGB Split Effect */}
-      <style jsx>{`
+              >
+                Mint sDOGE
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CSS for RGB Split Effect */}
+        <style jsx>{`
         .rgb-split-red {
           filter: brightness(1.5) contrast(1.2) url(#red-channel);
         }
@@ -404,58 +549,58 @@ export default function Scene3D({
           filter: brightness(1.5) contrast(1.2) url(#blue-channel);
         }
       `}</style>
-      
-      {/* SVG Filters for RGB Channel Isolation */}
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
-        <defs>
-          <filter id="red-channel">
-            <feColorMatrix
-              type="matrix"
-              values="1 0 0 0 0
+
+        {/* SVG Filters for RGB Channel Isolation */}
+        <svg width="0" height="0" style={{ position: 'absolute' }}>
+          <defs>
+            <filter id="red-channel">
+              <feColorMatrix
+                type="matrix"
+                values="1 0 0 0 0
                       0 0 0 0 0
                       0 0 0 0 0
                       0 0 0 1 0"
-            />
-          </filter>
-          <filter id="green-channel">
-            <feColorMatrix
-              type="matrix"
-              values="0 0 0 0 0
+              />
+            </filter>
+            <filter id="green-channel">
+              <feColorMatrix
+                type="matrix"
+                values="0 0 0 0 0
                       0 1 0 0 0
                       0 0 0 0 0
                       0 0 0 1 0"
-            />
-          </filter>
-          <filter id="blue-channel">
-            <feColorMatrix
-              type="matrix"
-              values="0 0 0 0 0
+              />
+            </filter>
+            <filter id="blue-channel">
+              <feColorMatrix
+                type="matrix"
+                values="0 0 0 0 0
                       0 0 0 0 0
                       0 0 1 0 0
                       0 0 0 1 0"
-            />
-          </filter>
-        </defs>
-      </svg>
-      
-      {/* Spline Scene */}
-      <div 
-        style={{ 
-          position: 'relative', 
-          zIndex: 1, 
-          width: '100%', 
-          height: '100%',
-          opacity: opacity,
-          transform: `translateY(${translateY}px) scale(${scale})`,
-          transformOrigin: 'center center',
-          transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
-        }}
-      >
-        <Spline
-          scene="/scene.splinecode"
-          onLoad={onLoad}
-        />
-      </div>
+              />
+            </filter>
+          </defs>
+        </svg>
+
+        {/* Spline Scene */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            width: '100%',
+            height: '100%',
+            opacity: opacity,
+            transform: `translateX(${dogeTranslateX}) translateY(${translateY}px) scale(${scale})`,
+            transformOrigin: scrollProgress >= section3Threshold ? 'left center' : 'center center',
+            transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
+          }}
+        >
+          <Spline
+            scene="/scene.splinecode"
+            onLoad={onLoad}
+          />
+        </div>
       </div>
     </>
   );
