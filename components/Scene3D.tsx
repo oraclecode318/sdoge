@@ -314,13 +314,13 @@ export default function Scene3D({
         />
 
         {/* Logo Image - Behind Doge Model at Head Part with RGB Split Effect - Hidden in section 3+ */}
-        {scrollProgress < section3Threshold && (
+        {scrollProgress < section2Threshold && (
           <div
             style={{
               position: 'absolute',
               top: '10%',
               left: '50%',
-              transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
+              transform: `translateX(-50%) scale(${scale})`,
               width: 'auto',
               height: 'auto',
               zIndex: 0,
@@ -413,7 +413,7 @@ export default function Scene3D({
           position: 'absolute',
           top: '10%',
           left: '50%',
-          transform: `translateX(-50%) translateY(${translateY + (1 - dogeTransitionProgress) * 30}px) scale(${scale * (0.9 + dogeTransitionProgress * 0.1)})`,
+          transform: `translateX(-50%) scale(${scale * (0.9 + dogeTransitionProgress * 0.1)})`,
           width: 'auto',
           height: 'auto',
           zIndex: 0,
@@ -597,7 +597,7 @@ export default function Scene3D({
             width: '100%',
             height: '100%',
             opacity: opacity,
-            transform: `translateX(calc(${dogeTranslateX} - 40px)) translateY(${translateY}px) scale(${scale})`,
+            transform: `translateX(calc(${dogeTranslateX} - 25px)) translateY(${translateY}px) scale(${scale})`,
             transformOrigin: scrollProgress >= section3Threshold ? 'left center' : 'center center',
             transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
           }}

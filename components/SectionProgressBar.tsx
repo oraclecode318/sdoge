@@ -59,10 +59,6 @@ export default function SectionProgressBar({ totalSections, startFromSection = 2
           style={{ width: `${currentProgress}%` }}
         />
       </div>
-      <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
-        <span className="text-white/60">Section {currentSection}</span>
-        <span className="text-white/60">{Math.round(currentProgress)}%</span>
-      </div>
     </div>
   );
 }
