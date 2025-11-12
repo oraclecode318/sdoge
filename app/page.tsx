@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 // import Ticker from '@/components/Ticker';
 import HeroText from '@/components/HeroText';
 import HeroInfoBoxes from '@/components/HeroInfoBoxes';
+import Section2Content from '@/components/Section2Content';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
@@ -325,10 +326,7 @@ export default function Home() {
 
       {/* Section 2 */}
       <section id="section-2" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
-        <div className="text-white text-3xl md:text-5xl font-normal text-center">
-          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">02</div>
-          <div>Section Two</div>
-        </div>
+        <Section2Content />
       </section>
 
       {/* Section 3 */}

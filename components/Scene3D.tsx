@@ -188,8 +188,15 @@ export default function Scene3D({
 
   // Calculate opacity, scale, and position based on scroll progress
   // scrollProgress is typically 0 to 1, where 0 is top and 1 is scrolled down
-  const opacity = Math.max(0, 1 - scrollProgress * 2); // Fade out faster
-  const scale = Math.max(0.3, 1 - scrollProgress * 1.5); // Scale down but not completely to 0
+  // Keep size constant until section 2 (around 0.33 scroll progress)
+  const section2Threshold = 0.33; // End of section 2 (2 out of 6 sections)
+  
+  // Only start scaling after section 2
+  const adjustedScrollProgress = Math.max(0, scrollProgress - section2Threshold);
+  const normalizedScrollProgress = adjustedScrollProgress / (1 - section2Threshold);
+  
+  const opacity = Math.max(0, 1 - normalizedScrollProgress * 2); // Fade out faster
+  const scale = scrollProgress <= section2Threshold ? 1 : Math.max(0.3, 1 - normalizedScrollProgress * 1.5); // Keep original size until section 2
   const translateY = -scrollProgress * 300; // Move up by 300px at full scroll
 
   // Calculate distortion amount based on scroll velocity
