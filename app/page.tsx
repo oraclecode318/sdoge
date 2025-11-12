@@ -166,17 +166,18 @@ export default function Home() {
               {/* Custom Professional Tooltip for Dice */}
               {hoveredButton === 'dice-random' && (
                 <div 
-                  className="fixed bottom-24 left-8 px-4 py-3 bg-gradient-to-r from-gray-800 to-black border border-[#ffd841]/30 text-white text-sm font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap"
+                  className="fixed bottom-28 left-8 bg-[#0b0b0b] border-2 border-dotted border-white/80 text-[#ffffff] font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap"
                   style={{
                     opacity: Math.max(0, 1 - (scrollProgress / 0.15)),
-                    padding: '8px 12px'
+                    padding: '16px',
+                    fontSize: '14px'
                   }}
                 >
                   <div className="flex items-center space-x-2">
                     <span>Random Animation</span>
                   </div>
                   {/* Tooltip Arrow */}
-                  <div className="absolute top-full left-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#ffd841]/30"></div>
+                  <div className="absolute top-full left-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white/80"></div>
                 </div>
               )}
             </div>
@@ -201,16 +202,6 @@ export default function Home() {
                   >
                     <FaChevronLeft className="text-sm" />
                   </button>
-                  
-                  {/* Custom Professional Tooltip for Previous */}
-                  {hoveredButton === 'prev-page' && currentPage > 0 && (
-                    <div style={{padding: '8px 12px'}} className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gradient-to-r from-gray-900 to-black border border-[#ffd841]/30 text-white text-sm font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <span>Prev</span>
-                      </div>
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#ffd841]/30"></div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Animation Buttons */}
@@ -231,13 +222,17 @@ export default function Home() {
                         
                         {/* Custom Professional Tooltip */}
                         {hoveredButton === buttonId && (
-                          <div className="absolute p-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-800 to-black-800 border border-[#b6b3a6]/30 text-white text-sm font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap"
-                          style={{padding: '8px 12px'}}>
+                          <div className="absolute left-1/2 transform -translate-x-1/2 bg-[#0b0b0b] border-2 border-dotted border-white/80 text-[#ffffff] font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap"
+                          style={{
+                            bottom: 'calc(100% + 12px)',
+                            padding: '16px',
+                            fontSize: '14px'
+                          }}>
                             <div className="flex items-center space-x-2">
                               <span>Animation {actualIndex + 1}</span>
                             </div>
                             {/* Tooltip Arrow */}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#ffd841]/30"></div>
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white/80"></div>
                           </div>
                         )}
                       </div>
@@ -256,19 +251,6 @@ export default function Home() {
                   >
                     <FaChevronRight className="text-sm" />
                   </button>
-                  
-                  {/* Custom Professional Tooltip for Next */}
-                  {hoveredButton === 'next-page' && currentPage < totalPages - 1 && (
-                    <div 
-                    style={{padding: '8px 12px'}}
-                    className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gradient-to-r from-gray-900 to-black border border-[#ffd841]/30 text-white text-sm font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <FaChevronRight className="text-[#ffd841]" />
-                        <span>Next</span>
-                      </div>
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#ffd841]/30"></div>
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -312,11 +294,17 @@ export default function Home() {
                 
                 {/* Custom Professional Tooltip for Send Button */}
                 {hoveredButton === 'send-button' && animationInput.trim() && (
-                  <div style={{padding: '8px 12px'}} className="absolute bottom-full mb-2 right-0 px-3 py-2 bg-gradient-to-r from-gray-900 to-black border border-[#ffd841]/30 text-white text-sm font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 whitespace-nowrap">
+                  <div style={{
+                    padding: '16px',
+                    width: '300px',
+                    height: '60px',
+                    fontSize: '14px',
+                    bottom: 'calc(100% + 12px)'
+                  }} className="absolute right-0 bg-[#0b0b0b] border-2 border-dotted border-white/80 text-[#ffffff] font-medium rounded-lg shadow-2xl backdrop-blur-sm z-50 flex items-center justify-center">
                     <div className="flex items-center space-x-2">
                       <span>Send</span>
                     </div>
-                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#ffd841]/30"></div>
+                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white/80"></div>
                   </div>
                 )}
               </div>

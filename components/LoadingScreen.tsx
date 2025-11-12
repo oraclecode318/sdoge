@@ -40,23 +40,18 @@ export default function LoadingScreen() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center gap-8"
+            className="flex flex-col items-center gap-2"
           >
             {/* Logo */}
             <motion.div
-              animate={{
-                filter: [
-                  'drop-shadow(0 0 20px rgba(255, 237, 78, 0.5))',
-                  'drop-shadow(0 0 40px rgba(255, 237, 78, 0.8))',
-                  'drop-shadow(0 0 20px rgba(255, 237, 78, 0.5))',
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
             >
               <img 
                 src="/image/logo.png" 
                 alt="sDOGE Logo" 
-                className="w-48 h-48 object-contain"
+                className="w-48 h-28 object-contain"
               />
             </motion.div>
 

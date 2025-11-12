@@ -89,8 +89,8 @@ export default function Header() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="fixed top-0 left-0 right-0 z-[102] flex items-center justify-between px-3 md:px-8 py-3 bg-transparent"
-        style={{ padding: '12px' }}
+        className="fixed top-0 left-0 right-0 z-[102] flex items-center justify-between bg-transparent"
+        style={{ padding: '20px' }}
       >
         {/* Logo */}
         <motion.div
@@ -105,7 +105,7 @@ export default function Header() {
         </motion.div>
 
         {/* Navigation - Desktop */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8" style={{ marginLeft: '100px' }}>
           {['HOME', 'DOCS'].map((item, i) => (
             <motion.a
               key={item}

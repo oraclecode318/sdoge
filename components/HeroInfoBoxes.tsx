@@ -17,11 +17,11 @@ function HeroInfoBox({ position, title, value }: HeroInfoBoxProps) {
         className={`absolute top-0 bottom-0 ${position === 'left' ? 'left-0' : 'right-0'} flex flex-col justify-between h-full`}
       >
         {Array.from({ length: 10 }).map((_, i) => {
-          const isLongTick = i % 3 === 0;
+          const isLongTick = i % 9 === 0;
           return (
             <div
               key={i}
-              className={`bg-[#ffffff]/80 ${isLongTick ? 'w-4 h-0.75' : 'w-2 h-0.5'}`}
+              className={`bg-[#ffffff]/80 ${isLongTick ? 'w-4 h-0.5' : 'w-3 h-0.25'}`}
               style={{
                 marginLeft: position === 'left' ? '0' : 'auto',
                 marginRight: position === 'right' ? '0' : 'auto',
@@ -43,7 +43,10 @@ function HeroInfoBox({ position, title, value }: HeroInfoBoxProps) {
           {title}
         </div>
         <div className="text-xs md:text-sm font-normal text-right">
-          {value}
+          <span className="text-white">{value.split(' ')[0]}</span>
+          {value.split(' ').length > 1 && (
+            <span className="text-[#ffd841]"> {value.split(' ').slice(1).join(' ')}</span>
+          )}
         </div>
       </div>
     </div>
