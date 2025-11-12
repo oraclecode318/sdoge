@@ -597,7 +597,7 @@ export default function Scene3D({
             width: '100%',
             height: '100%',
             opacity: opacity,
-            transform: `translateX(${dogeTranslateX}) translateY(${translateY}px) scale(${scale})`,
+            transform: `translateX(calc(${dogeTranslateX} - 40px)) translateY(${translateY}px) scale(${scale})`,
             transformOrigin: scrollProgress >= section3Threshold ? 'left center' : 'center center',
             transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
           }}
