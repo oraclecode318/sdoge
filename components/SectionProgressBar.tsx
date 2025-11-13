@@ -47,7 +47,7 @@ export default function SectionProgressBar({ totalSections, startFromSection = 2
 
   if (!isVisible) return null;
 
-  // Calculate progress: sections 2-6 (5 sections) = 0% to 100%
+  // Calculate progress: sections 2-5 (4 sections) = 0% to 100%
   const sectionsToShow = totalSections - startFromSection + 1;
   const currentProgress = Math.max(0, Math.min(100, ((currentSection - startFromSection + 1) / sectionsToShow) * 100));
 

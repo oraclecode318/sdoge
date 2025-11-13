@@ -381,16 +381,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 6 */}
-      <section id="section-6" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
-        <div className="text-white text-3xl md:text-5xl font-normal text-center">
-          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">06</div>
-          <div>Section Six</div>
-        </div>
-      </section>
-
       {/* Section Progress Bar */}
-      <SectionProgressBar totalSections={6} startFromSection={2} />
+      <SectionProgressBar totalSections={5} startFromSection={2} />
       </main>
       
       {/* Analog Decay Effect Overlay - applies to entire screen */}

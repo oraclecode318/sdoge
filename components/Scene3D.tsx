@@ -194,9 +194,9 @@ export default function Scene3D({
 
   // Calculate opacity, scale, and position based on scroll progress
   // scrollProgress is typically 0 to 1, where 0 is top and 1 is scrolled down
-  // Keep size constant until section 2 (around 0.33 scroll progress)
-  const section2Threshold = 0.33; // End of section 2 (2 out of 6 sections)
-  const section3Threshold = 0.4; // Start of section 3 (40% progress)
+  // Keep size constant until section 2 (around 0.4 scroll progress)
+  const section2Threshold = 0.4; // End of section 2 (2 out of 5 sections)
+  const section3Threshold = 0.6; // Start of section 3 (60% progress)
 
   // Only start scaling after section 2
   const adjustedScrollProgress = Math.max(0, scrollProgress - section2Threshold);
@@ -204,7 +204,7 @@ export default function Scene3D({
 
   const opacity = Math.max(0, 1 - normalizedScrollProgress * 2); // Fade out faster
   const scale = scrollProgress <= section2Threshold ? 1.1 : Math.max(0.3, 1.1 - normalizedScrollProgress * 1.5); // Smaller size (1.0) until section 2
-  const translateY = scrollProgress <= section2Threshold ? -scrollProgress * 300 : -scrollProgress * 250 + 50; // Move up by 250px at full scroll, offset by 50px down
+  const translateY = scrollProgress <= section2Threshold ? 0 : -scrollProgress * 250 + 50; // Keep position same until section 2 ends, then move up
 
   // Smooth doge positioning transition from center to left
   const dogeTransitionRange = section3Threshold - section2Threshold; // 0.07 range
