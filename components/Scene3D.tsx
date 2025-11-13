@@ -210,7 +210,7 @@ export default function Scene3D({
     : scrollProgress >= fadeEndProgress 
       ? 0.0 
       : 1.0 - ((scrollProgress - fadeStartProgress) / (fadeEndProgress - fadeStartProgress));
-  const scale = scrollProgress <= section2Threshold ? 1.1 : Math.max(0.3, 1.1 - normalizedScrollProgress * 1.5); // Smaller size (1.0) until section 2
+  const scale = scrollProgress <= section2Threshold ? 1.045 : Math.max(0.285, 1.045 - normalizedScrollProgress * 1.5); // Smaller size (5% reduction) until section 2
   const translateY = scrollProgress <= section2Threshold ? 0 : -scrollProgress * 250 + 50; // Keep position same until section 2 ends, then move up
 
   // Doge stays centered - no horizontal movement

@@ -112,11 +112,11 @@
   --font-sans: var(--font-beltram);
 }
 
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
+} */
 
 html {
   scroll-behavior: smooth;
