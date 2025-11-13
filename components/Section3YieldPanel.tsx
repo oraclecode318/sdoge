@@ -30,17 +30,80 @@ export default function Section3YieldPanel({ scrollProgress }: YieldPanelProps) 
     const scale = 0.9 + (transitionProgress * 0.1); // Start at 90%, grow to 100%
 
     return (
-        <div 
-            className="absolute top-1/2 left-[63%] z-30 pointer-events-none max-w-2xl"
-            style={{
-                opacity: opacity,
-                transform: `translateX(-50%) translateY(calc(-50% + ${translateY}px)) scale(${scale})`,
-                transition: 'opacity 0.1s ease-out, transform 0.1s ease-out'
-            }}
-        >
+        <>
+            {/* Mint sDOGE Headline */}
+            <div
+                className="absolute z-30 pointer-events-none"
+                style={{
+                    top: '10%',
+                    left: '50%',
+                    transform: `translateX(-50%) scale(${scale})`,
+                    opacity: opacity,
+                    transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
+                }}
+            >
+                <div
+                    style={{
+                        fontFamily: 'var(--font-aktiv)',
+                        fontWeight: '800',
+                        fontStyle: 'italic',
+                        fontSize: '104px',
+                        lineHeight: '100%',
+                        letterSpacing: '-4.28px',
+                        textAlign: 'center',
+                        color: '#ffffff',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    Mint sDOGE
+                </div>
+            </div>
+
+            {/* Dotted Border Behind Doge Image */}
+            <div 
+                className="absolute top-[57%] left-[30%] pointer-events-none border-2 border-white/30 border-dotted rounded"
+                style={{
+                    opacity: opacity,
+                    transform: `translateX(-50%) translateY(calc(-50% + ${translateY}px)) scale(${scale * 1.2})`,
+                    transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
+                    width: '420px',
+                    height: '440px',
+                    zIndex: 19,
+                }}
+            />
+
+            {/* Doge Image - Left Side */}
+            <div 
+                className="absolute top-[52%] left-[30%] z-20 pointer-events-none"
+                style={{
+                    opacity: opacity,
+                    transform: `translateX(-50%) translateY(calc(-50% + ${translateY}px)) scale(${scale * 1.2})`,
+                    transition: 'opacity 0.1s ease-out, transform 0.1s ease-out'
+                }}
+            >
+                <img 
+                    src="/image/doge.png" 
+                    alt="Doge" 
+                    style={{
+                        width: '450px',
+                        height: 'auto',
+                        objectFit: 'contain',
+                    }}
+                />
+            </div>
+
+            {/* Yield Panel */}
+            <div 
+                className="absolute top-[55%] left-[67%] z-30 pointer-events-none min-w-[44rem]"
+                style={{
+                    opacity: opacity,
+                    transform: `translateX(-50%) translateY(calc(-50% + ${translateY}px)) scale(${scale})`,
+                    transition: 'opacity 0.1s ease-out, transform 0.1s ease-out'
+                }}
+            >
             {/* Main Title */}
             <div className="text-white text-2xl md:text-3xl font-light italic mb-8 leading-tight"
-                style={{ fontFamily: 'var(--font-aktiv)', fontWeight: '400', marginBottom: '2.5rem' }}>
+                style={{ fontFamily: 'Aktiv Grotesk Ex Trial', fontWeight: '100', fontStyle: 'italic', marginBottom: '2.5rem' }}>
                 Begin accruing yield right away
             </div>
 
@@ -102,5 +165,6 @@ export default function Section3YieldPanel({ scrollProgress }: YieldPanelProps) 
                 </div>
             </div>
         </div>
+        </>
     );
 }

@@ -194,7 +194,7 @@ export default function Scene3D({
 
   // Calculate opacity, scale, and position based on scroll progress
   // scrollProgress is typically 0 to 1, where 0 is top and 1 is scrolled down
-  // Keep size constant until section 2 (around 0.4 scroll progress)
+  // Doge fades out from 0.45 to 0.5 scroll progress
   const section2Threshold = 0.4; // End of section 2 (2 out of 5 sections)
   const section3Threshold = 0.6; // Start of section 3 (60% progress)
 
@@ -202,14 +202,18 @@ export default function Scene3D({
   const adjustedScrollProgress = Math.max(0, scrollProgress - section2Threshold);
   const normalizedScrollProgress = adjustedScrollProgress / (1 - section2Threshold);
 
-  const opacity = Math.max(0, 1 - normalizedScrollProgress * 2); // Fade out faster
+  // Doge fade out: start at 0.45, completely gone by 0.5
+  const fadeStartProgress = 0.4;
+  const fadeEndProgress = 0.45;
+  const opacity = scrollProgress < fadeStartProgress 
+    ? 1.0 
+    : scrollProgress >= fadeEndProgress 
+      ? 0.0 
+      : 1.0 - ((scrollProgress - fadeStartProgress) / (fadeEndProgress - fadeStartProgress));
   const scale = scrollProgress <= section2Threshold ? 1.1 : Math.max(0.3, 1.1 - normalizedScrollProgress * 1.5); // Smaller size (1.0) until section 2
   const translateY = scrollProgress <= section2Threshold ? 0 : -scrollProgress * 250 + 50; // Keep position same until section 2 ends, then move up
 
-  // Smooth doge positioning transition from center to left
-  const dogeTransitionRange = section3Threshold - section2Threshold; // 0.07 range
-  const dogeTransitionProgress = Math.min(1, Math.max(0, (scrollProgress - section2Threshold) / dogeTransitionRange));
-  const dogeTranslateX = `${dogeTransitionProgress * -25}%`; // Smoothly move from 0% to -25%
+  // Doge stays centered - no horizontal movement
 
   // Calculate distortion amount based on scroll velocity
   const distortionScale = Math.min(Math.abs(scrollVelocity) * 200, 400);
@@ -406,142 +410,6 @@ export default function Scene3D({
           </div>
         )}
 
-      {/* Section 3+ Headline Text with RGB Split Effect - Smooth Transition */}
-      {isMounted && scrollProgress >= section2Threshold && (
-      <div
-        style={{
-          position: 'absolute',
-          top: '8%',
-          left: '50%',
-          transform: `translateX(-50%) scale(${scale * (0.9 + dogeTransitionProgress * 0.1)})`,
-          width: 'auto',
-          height: 'auto',
-          zIndex: 0,
-          pointerEvents: 'none',
-          opacity: opacity * dogeTransitionProgress,
-          transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
-        }}
-      >
-        {/* RGB Split Effect Container */}
-        <div style={{ position: 'relative', display: 'inline-block', fontFamily:'var(--font-aktiv)' }}>
-              {/* RGB Split Layers - Only show when active */}
-              {isRgbSplitActive && (
-                <>
-                  {/* Red Channel */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: '-8px',
-                      width: 'auto',
-                      height: '200px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: 'Aktiv Grotesk Ex Trial',
-                      fontWeight: '800',
-                      fontStyle: 'italic',
-                      fontSize: '122px',
-                      lineHeight: '100%',
-                      letterSpacing: '-4.28px',
-                      textAlign: 'center',
-                      color: '#ff0000',
-                      mixBlendMode: 'screen',
-                      filter: 'brightness(1.5)',
-                      opacity: 0.8,
-                      whiteSpace: 'nowrap',
-                    }}
-                    className="rgb-split-red"
-                  >
-                    Mint sDOGE
-                  </div>
-
-                  {/* Green Channel */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: 'auto',
-                      height: '200px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: 'Aktiv Grotesk Ex Trial',
-                      fontWeight: '800',
-                      fontStyle: 'italic',
-                      fontSize: '122px',
-                      lineHeight: '100%',
-                      letterSpacing: '-4.28px',
-                      textAlign: 'center',
-                      color: '#00ff00',
-                      mixBlendMode: 'screen',
-                      filter: 'brightness(1.5)',
-                      opacity: 0.8,
-                      whiteSpace: 'nowrap',
-                    }}
-                    className="rgb-split-green"
-                  >
-                    Mint sDOGE
-                  </div>
-
-                  {/* Blue Channel */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: '8px',
-                      width: 'auto',
-                      height: '200px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: 'Aktiv Grotesk Ex Trial',
-                      fontWeight: '800',
-                      fontStyle: 'italic',
-                      fontSize: '122px',
-                      lineHeight: '100%',
-                      letterSpacing: '-4.28px',
-                      textAlign: 'center',
-                      color: '#0000ff',
-                      mixBlendMode: 'screen',
-                      filter: 'brightness(1.5)',
-                      opacity: 0.8,
-                      whiteSpace: 'nowrap',
-                    }}
-                    className="rgb-split-blue"
-                  >
-                    Mint sDOGE
-                  </div>
-                </>
-              )}
-
-              {/* Main Text */}
-              <div
-                style={{
-                  position: 'relative',
-                  width: 'auto',
-                  height: '200px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'Aktiv Grotesk Ex Trial',
-                  fontWeight: '800',
-                  fontStyle: 'italic',
-                  fontSize: '122px',
-                  lineHeight: '100%',
-                  letterSpacing: '-4.28px',
-                  textAlign: 'center',
-                  color: '#ffffff',
-                  filter: isRgbSplitActive ? 'brightness(1.1)' : 'brightness(1)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Mint sDOGE
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* CSS for RGB Split Effect */}
         <style jsx>{`
@@ -597,8 +465,7 @@ export default function Scene3D({
             width: '100%',
             height: '100%',
             opacity: opacity,
-            transform: `translateX(calc(${dogeTranslateX} - 25px)) translateY(${translateY}px) scale(${scale})`,
-            transformOrigin: scrollProgress >= section3Threshold ? 'left center' : 'center center',
+             transform: `translateX(-25px) translateY(${translateY}px) scale(${scale})`,
             transition: 'opacity 0.1s ease-out, transform 0.1s ease-out',
           }}
         >
