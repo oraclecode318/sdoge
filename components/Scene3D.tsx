@@ -411,7 +411,7 @@ export default function Scene3D({
       <div
         style={{
           position: 'absolute',
-          top: '10%',
+          top: '8%',
           left: '50%',
           transform: `translateX(-50%) scale(${scale * (0.9 + dogeTransitionProgress * 0.1)})`,
           width: 'auto',
