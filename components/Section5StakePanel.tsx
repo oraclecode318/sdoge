@@ -11,6 +11,7 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
     const section4End = 0.67; // End of section 4
     const section5Start = 0.74; // Start of section 5
     const [isMounted, setIsMounted] = useState(false);
+    const [isButtonHovered, setIsButtonHovered] = useState(false);
 
     // Ensure consistent hydration - only show after client-side mount
     useEffect(() => {
@@ -126,16 +127,35 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
                         gap: '2rem',
                     }}
                 >
-                    <img
-                        src="/image/TOKEN_Op1_D3.0.png"
-                        alt="Token"
-                        style={{
-                            width: 'auto',
-                            height: '480px',
-                            objectFit: 'contain',
-                        }}
-                        className="rotate-[-8deg]"
-                    />
+                    <div className="relative">
+                        <img
+                            src="/image/TOKEN_Op1_D3.0.png"
+                            alt="Token"
+                            style={{
+                                width: 'auto',
+                                height: '480px',
+                                objectFit: 'contain',
+                                opacity: isButtonHovered ? 0 : 1,
+                                transition: 'opacity 0.3s ease-in-out',
+                            }}
+                            className="rotate-[-8deg]"
+                        />
+                        <img
+                            src="/image/TOKEN_Op2_D3.0.png"
+                            alt="Token Hover"
+                            style={{
+                                width: 'auto',
+                                height: '480px',
+                                objectFit: 'contain',
+                                opacity: isButtonHovered ? 1 : 0,
+                                transition: 'opacity 0.3s ease-in-out',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                            }}
+                            className="rotate-[8deg]"
+                        />
+                    </div>
                 </div>
                 {/* COMING SOON Button */}
                 <button
@@ -146,6 +166,8 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
                         letterSpacing: '2px',
                         textTransform: 'uppercase',
                     }}
+                    onMouseEnter={() => setIsButtonHovered(true)}
+                    onMouseLeave={() => setIsButtonHovered(false)}
                 >
                     COMING SOON
                 </button>
