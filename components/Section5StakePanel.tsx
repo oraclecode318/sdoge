@@ -61,7 +61,7 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
 
             {/* Image Container with Dotted Border */}
             <div
-                className="absolute top-[57%] left-[50%] z-30 pointer-events-none"
+                className="absolute top-[58%] left-[50%] z-30 pointer-events-none"
                 style={{
                     opacity: opacity,
                     transform: `translateX(-50%) translateY(calc(-50% + ${translateY}px)) scale(${scale})`,
@@ -69,7 +69,7 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
                 }}
             >
                 <div
-                    className="border-2 border-white/30 border-dotted rounded p-4 mb-4"
+                    className="border-2 border-white/30 border-dotted rounded p-2 mb-4"
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -82,9 +82,10 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
                         alt="Token"
                         style={{
                             width: 'auto',
-                            height: '400px',
+                            height: '480px',
                             objectFit: 'contain',
                         }}
+                        className="rotate-[-8deg]"
                     />
                 </div>
                 {/* COMING SOON Button */}

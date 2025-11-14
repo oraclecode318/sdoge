@@ -18,18 +18,16 @@ import SectionProgressBar from '@/components/SectionProgressBar';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 import { 
-  FaPlay, 
-  FaPause, 
-  FaMusic, 
-  FaGamepad, 
-  FaRocket, 
-  FaStar, 
-  FaBolt, 
-  FaFire, 
-  FaMagic, 
-  FaDiceThree, 
-  FaChevronLeft, 
-  FaChevronRight,
+  FaPlay,   FaPause,   FaMusic,   FaGamepad,   FaRocket,   FaStar,   FaBolt,   FaFire,   FaMagic,   FaDiceThree,   FaChevronLeft, 
+  FaChevronRight,  FaHeart,  FaGem,  FaCrown,  FaChild,  FaWind,  FaHandSparkles,  FaAtom,  FaFlask,  FaEye,  FaSkull,  FaGhost,
+  FaDragon,  FaHorseHead,  FaFeather,  FaLeaf,  FaSnowflake,  FaSun,  FaMoon,  FaCloud,  FaBolt as FaLightningBolt,  FaWater,  FaMountain,  FaTree,  FaSeedling,
+  FaBug,  FaFish,  FaDove,  FaCat,  FaDog,  FaHorse,  FaSpider,  FaFrog,  FaOtter,  FaHippo,  FaPaw,  FaEgg,
+  FaApple,  FaCarrot,  FaHamburger,  FaCoffee,  FaWineGlass,  FaIceCream,  FaBirthdayCake,  FaCandyCane,  FaGuitar,  FaDrum,  FaMicrophone,  FaHeadphones,
+  FaCamera,  FaFilm,  FaPalette,  FaBrush,  FaCompass,  FaMap,  FaGlobe,  FaRocket as FaRocketAlt,  FaSpaceShuttle,  FaSatellite,  FaRobot,  FaCog,  FaWrench,
+  FaHammer,  FaKey,  FaLock,  FaUnlock,  FaShoppingCart,  FaGift,  FaTrophy,  FaMedal,  FaFlag,  FaBookmark,  FaBook,
+  FaGraduationCap,  FaLightbulb,  FaSearch,  FaHome,  FaCar,  FaBicycle,  FaPlane,  FaShip,  FaTrain,  FaBus,  FaMotorcycle,  FaUmbrella,  FaGlasses,  FaUserTie,  FaTshirt,
+  FaSocks,  FaShower,  FaRing,  FaClock,  FaPhone,  FaLaptop,  FaTablet,  FaKeyboard,  FaMouse,
+  FaPrint,  FaWifi,  FaBluetooth,  FaCarBattery,  FaPlug,  FaVolumeUp,  FaVolumeUp as FaVolumeHigh,  FaVolumeDown,  FaVolumeMute,
 } from 'react-icons/fa';
 
 import { GoPaperAirplane } from 'react-icons/go';
@@ -118,9 +116,23 @@ export default function Home() {
     setCurrentPage(prev => Math.min(totalPages - 1, prev + 1));
   }, [totalPages]);
 
-  // Animation icons using React Icons
+  // Animation icons using React Icons - expanded to 100+ icons
     const getAnimationIcon = useCallback((index: number) => {
-      const IconComponent = [FaPlay, FaMusic, FaGamepad, FaRocket, FaStar, FaBolt, FaFire, FaMagic, FaDiceThree, FaPause][index % 10];
+      const iconComponents = [
+        FaPlay, FaMusic, FaGamepad, FaRocket, FaStar, FaBolt, FaFire, FaMagic, FaDiceThree, FaPause,
+        FaHeart, FaGem, FaCrown, FaChild, FaWind, FaHandSparkles, FaAtom, FaFlask, FaEye, FaSkull,
+        FaGhost, FaDragon, FaHorseHead, FaFeather, FaLeaf, FaSnowflake, FaSun, FaMoon, FaCloud, FaLightningBolt,
+        FaWater, FaMountain, FaTree, FaSeedling, FaBug, FaFish, FaDove, FaCat, FaDog, FaHorse,
+        FaSpider, FaFrog, FaOtter, FaHippo, FaPaw, FaEgg, FaApple, FaCarrot, FaHamburger, FaCoffee,
+        FaWineGlass, FaIceCream, FaBirthdayCake, FaCandyCane, FaGuitar, FaDrum, FaMicrophone, FaHeadphones, FaCamera, FaFilm,
+        FaPalette, FaBrush, FaCompass, FaMap, FaGlobe, FaRocketAlt, FaSpaceShuttle, FaSatellite, FaRobot, FaCog,
+        FaWrench, FaHammer, FaKey, FaLock, FaUnlock, FaShoppingCart, FaGift, FaTrophy, FaMedal, FaFlag,
+        FaBookmark, FaBook, FaGraduationCap, FaLightbulb, FaSearch, FaHome, FaCar, FaBicycle, FaPlane, FaShip,
+        FaTrain, FaBus, FaMotorcycle, FaUmbrella, FaGlasses, FaUserTie, FaTshirt, FaSocks, FaShower, FaRing,
+        FaClock, FaPhone, FaLaptop, FaTablet, FaKeyboard, FaMouse, FaPrint, FaWifi, FaBluetooth, FaCarBattery,
+        FaPlug, FaVolumeUp, FaVolumeHigh, FaVolumeDown, FaVolumeMute
+      ];
+      const IconComponent = iconComponents[index % iconComponents.length];
       return <IconComponent className="text-sm text-white/50 hover:text-[#ffd841]" />;
     }, []);
 
