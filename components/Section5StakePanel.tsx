@@ -31,6 +31,54 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
 
     return (
         <>
+            {/* RGB Split Effect Styles */}
+            <style jsx>{`
+                @keyframes rgbSplitExtreme {
+                    0% {
+                        text-shadow: 
+                            4px 0 0 #ff0080,
+                            -4px 0 0 #00ff80;
+                    }
+                    15% {
+                        text-shadow: 
+                            8px 0 0 #ff0080,
+                            -8px 0 0 #00ff80,
+                            0 4px 0 #8000ff;
+                    }
+                    30% {
+                        text-shadow: 
+                            12px 0 0 #ff0080,
+                            -12px 0 0 #00ff80,
+                            0 8px 0 #8000ff;
+                    }
+                    45% {
+                        text-shadow: 
+                            8px 0 0 #ff0080,
+                            -8px 0 0 #00ff80,
+                            0 4px 0 #8000ff;
+                    }
+                    60% {
+                        text-shadow: 
+                            4px 0 0 #ff0080,
+                            -4px 0 0 #00ff80;
+                    }
+                    75% {
+                        text-shadow: 
+                            6px 0 0 #ff0080,
+                            -6px 0 0 #00ff80,
+                            0 2px 0 #8000ff;
+                    }
+                    100% {
+                        text-shadow: 
+                            4px 0 0 #ff0080,
+                            -4px 0 0 #00ff80;
+                    }
+                }
+                .rgb-split-text-extreme {
+                    animation: rgbSplitExtreme 2s ease-in-out infinite;
+                }
+            `}</style>
+
             {/* Stake and Earn Now Headline */}
             <div
                 className="absolute z-30 pointer-events-none"
@@ -43,6 +91,7 @@ export default function Section5StakePanel({ scrollProgress }: StakePanelProps) 
                 }}
             >
                 <div
+                    className="rgb-split-text-extreme"
                     style={{
                         fontFamily: 'var(--font-aktiv)',
                         fontWeight: '800',

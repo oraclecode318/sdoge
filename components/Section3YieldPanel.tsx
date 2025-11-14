@@ -31,6 +31,43 @@ export default function Section3YieldPanel({ scrollProgress }: YieldPanelProps) 
 
     return (
         <>
+            {/* RGB Split Effect Styles */}
+            <style jsx>{`
+                @keyframes rgbSplit {
+                    0% {
+                        text-shadow: 
+                            2px 0 0 #ff0000,
+                            -2px 0 0 #00ffff;
+                    }
+                    25% {
+                        text-shadow: 
+                            4px 0 0 #ff0000,
+                            -4px 0 0 #00ffff,
+                            0 2px 0 #00ff00;
+                    }
+                    50% {
+                        text-shadow: 
+                            6px 0 0 #ff0000,
+                            -6px 0 0 #00ffff,
+                            0 4px 0 #00ff00;
+                    }
+                    75% {
+                        text-shadow: 
+                            4px 0 0 #ff0000,
+                            -4px 0 0 #00ffff,
+                            0 2px 0 #00ff00;
+                    }
+                    100% {
+                        text-shadow: 
+                            2px 0 0 #ff0000,
+                            -2px 0 0 #00ffff;
+                    }
+                }
+                .rgb-split-text {
+                    animation: rgbSplit 3s ease-in-out infinite;
+                }
+            `}</style>
+
             {/* Mint sDOGE Headline */}
             <div
                 className="absolute z-30 pointer-events-none"
@@ -43,6 +80,7 @@ export default function Section3YieldPanel({ scrollProgress }: YieldPanelProps) 
                 }}
             >
                 <div
+                    className="rgb-split-text"
                     style={{
                         fontFamily: 'var(--font-aktiv)',
                         fontWeight: '800',

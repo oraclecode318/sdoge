@@ -179,6 +179,62 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
 
     return (
         <>
+            {/* Custom Scrollbar Styles & RGB Split Effect */}
+            <style jsx>{`
+                .chat-messages-scroll::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .chat-messages-scroll::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .chat-messages-scroll::-webkit-scrollbar-thumb {
+                    background: #ffd841;
+                    border-radius: 4px;
+                }
+                .chat-messages-scroll::-webkit-scrollbar-thumb:hover {
+                    background: #ffed70;
+                }
+                
+                @keyframes rgbSplitIntense {
+                    0% {
+                        text-shadow: 
+                            3px 0 0 #ff0040,
+                            -3px 0 0 #00ffff;
+                    }
+                    20% {
+                        text-shadow: 
+                            6px 0 0 #ff0040,
+                            -6px 0 0 #00ffff,
+                            0 3px 0 #40ff00;
+                    }
+                    40% {
+                        text-shadow: 
+                            9px 0 0 #ff0040,
+                            -9px 0 0 #00ffff,
+                            0 6px 0 #40ff00;
+                    }
+                    60% {
+                        text-shadow: 
+                            6px 0 0 #ff0040,
+                            -6px 0 0 #00ffff,
+                            0 3px 0 #40ff00;
+                    }
+                    80% {
+                        text-shadow: 
+                            3px 0 0 #ff0040,
+                            -3px 0 0 #00ffff;
+                    }
+                    100% {
+                        text-shadow: 
+                            3px 0 0 #ff0040,
+                            -3px 0 0 #00ffff;
+                    }
+                }
+                .rgb-split-text-intense {
+                    animation: rgbSplitIntense 2.5s ease-in-out infinite;
+                }
+            `}</style>
+            
             {/* Ask sDOGE Headline */}
             <div
                 className="absolute z-30 pointer-events-none"
@@ -191,6 +247,7 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                 }}
             >
                 <div
+                    className="rgb-split-text-intense"
                     style={{
                         fontFamily: 'var(--font-aktiv)',
                         fontWeight: '800',
@@ -221,36 +278,34 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
             >
                 <div className="flex gap-6 h-full">
                     {/* Left Panel - Chat Histories */}
-                    <div className="w-[30%] border-2 border-white/30 border-dotted rounded p-6">
-                        <div className="h-full flex flex-col">
-                            {/* Empty space at top for alignment */}
-                            <div className="text-white text-xl uppercase font-light tracking-wide mb-2 opacity-0 border-b border-white/30 border-dotted w-full" >
-                                //
-                            </div>
-                            
-                            {/* Chat History Items */}
-                            <div className="space-y-2 flex-1">
-                                {chatHistories.map((history) => (
-                                    <button
-                                        key={history.id}
-                                        onClick={() => setSelectedChat(history.id)}
-                                        className={`w-full text-left p-3 border-2 border-dotted rounded transition-all duration-200 ${
-                                            selectedChat === history.id 
-                                                ? 'border-[#ffd841] bg-[#ffd841]/10' 
-                                                : 'border-white/30 hover:border-white/50'
+                    <div className="w-[30%] border-2 border-white/30 border-dotted rounded flex flex-col">
+                        {/* Header section */}
+                        <div className="text-white p-7 text-lg uppercase font-light tracking-wide border-b-2 border-white/30 border-dotted" >
+                            //
+                        </div>
+                        
+                        {/* Chat History Items - auto height based on content */}
+                        <div className="space-y-2 p-6 flex-shrink-0">
+                            {chatHistories.map((history) => (
+                                <button
+                                    key={history.id}
+                                    onClick={() => setSelectedChat(history.id)}
+                                    className={`w-full text-left p-3 rounded transition-all duration-200 ${
+                                        selectedChat === history.id 
+                                            ? 'border-[#ffd841] bg-[#ffd841]' 
+                                            : 'border-white/30 hover:border-white/50'
+                                    }`}
+                                >
+                                    <div 
+                                        className={`text-xs font-semibold ${
+                                            selectedChat === history.id ? 'text-black' : 'text-white/70'
                                         }`}
+                                        style={{ fontFamily: 'var(--font-beltram)' }}
                                     >
-                                        <div 
-                                            className={`text-xs font-light ${
-                                                selectedChat === history.id ? 'text-[#ffd841]' : 'text-white'
-                                            }`}
-                                            style={{ fontFamily: 'var(--font-beltram)' }}
-                                        >
-                                            {history.title}
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
+                                        {history.title}
+                                    </div>
+                                </button>
+                            ))}
                         </div>
                     </div>
 
@@ -266,7 +321,7 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                                         className="w-[84px] h-[84px] object-cover"
                                     />
                                 </div>
-                                <div className="flex-1 flex justify-between items-center px-4">
+                                <div className="flex-1 flex justify-between items-center px-6">
                                     <div className="text-white/80 text-sm font-medium" style={{ fontFamily: 'var(--font-beltram)' }}>
                                         sDOGE
                                     </div>
@@ -280,9 +335,19 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                             </div>
 
                             {/* Chat Messages */}
-                            <div className="flex-1 overflow-y-scroll space-y-4 px-6">
+                            <div 
+                                className="flex-1 overflow-y-auto space-y-4 px-6 chat-messages-scroll pb-4"
+                                onWheel={(e) => {
+                                    // Prevent outer scroll when scrolling within chat messages
+                                    e.stopPropagation();
+                                }}
+                                style={{
+                                    scrollbarWidth: 'thin',
+                                    scrollbarColor: '#ffd841 transparent',
+                                }}
+                            >
                                 {conversations[selectedChat]?.map((message) => (
-                                    <div key={message.id} className={`flex items-start ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+                                    <div key={message.id} className={`flex py-4 items-start ${message.isBot ? 'justify-start' : 'justify-end'}`}>
                                         {message.isBot && (
                                             <div className="w-8 h-8 bg-transparent rounded-full flex items-center justify-center mr-2 flex-shrink-0">
                                                 <img 
@@ -306,14 +371,14 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                             </div>
 
                             {/* Current Question Display */}
-                            <div className="mt-4 pt-4 border-t border-white/20 px-6 pb-6">
+                            {/* <div className="mt-4 pt-4 border-t border-white/20 px-6 pb-6">
                                 <div className="text-white/70 text-xs mb-2" style={{ fontFamily: 'var(--font-beltram)' }}>
                                     What is sDOGE?
                                 </div>
                                 <div className="text-white text-sm" style={{ fontFamily: 'var(--font-beltram)' }}>
                                     {chatHistories.find(h => h.id === selectedChat)?.title}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
