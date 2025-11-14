@@ -9,6 +9,7 @@ import HeroInfoBoxes from '@/components/HeroInfoBoxes';
 import Section2Content from '@/components/Section2Content';
 import Section3YieldPanel from '@/components/Section3YieldPanel';
 import Section4ChatPanel from '@/components/Section4ChatPanel';
+import Section5StakePanel from '@/components/Section5StakePanel';
 import LoadingScreen from '@/components/LoadingScreen';
 import SmoothScroll from '@/components/SmoothScroll';
 import CustomCursor from '@/components/CustomCursor';
@@ -226,7 +227,7 @@ export default function Home() {
                           onClick={() => handlePlayAnimation(animation)}
                           onMouseEnter={() => setHoveredButton(buttonId)}
                           onMouseLeave={() => setHoveredButton(null)}
-                          className="w-10 h-10 border-2 border-white/80 border-dotted cursor-pointer space-x-2 rounded-full bg-transparent text-white hover:text-[#ffd841] hover:scale-110 hover:border-[#ffd841] transition-all duration-300 flex items-center justify-center text-lg"
+                          className="w-10 h-10 border-2 border-white/80 border-dotted cursor-pointer rounded-full bg-transparent text-white hover:text-[#ffd841] hover:scale-110 hover:border-[#ffd841] transition-all duration-300 flex items-center justify-center text-lg"
                         >
                           {getAnimationIcon(actualIndex)}
                         </button>
@@ -373,10 +374,7 @@ export default function Home() {
 
       {/* Section 5 */}
       <section id="section-5" className="relative z-20 h-screen flex items-center justify-center pointer-events-none">
-        <div className="text-white text-3xl md:text-5xl font-normal text-center">
-          <div className="text-[#ffd841] text-6xl md:text-8xl font-normal mb-4">05</div>
-          <div>Section Five</div>
-        </div>
+        <Section5StakePanel scrollProgress={scrollProgress} />
       </section>
 
       {/* Section Progress Bar */}

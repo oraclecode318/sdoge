@@ -224,13 +224,12 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                     <div className="w-[30%] border-2 border-white/30 border-dotted rounded p-6">
                         <div className="h-full flex flex-col">
                             {/* Empty space at top for alignment */}
-                            <div className="text-white text-xs uppercase font-light tracking-wide mb-6 opacity-0" 
-                                style={{ fontFamily: 'var(--font-beltram)' }}>
+                            <div className="text-white text-xl uppercase font-light tracking-wide mb-2 opacity-0 border-b border-white/30 border-dotted w-full" >
                                 //
                             </div>
                             
                             {/* Chat History Items */}
-                            <div className="space-y-4 flex-1">
+                            <div className="space-y-2 flex-1">
                                 {chatHistories.map((history) => (
                                     <button
                                         key={history.id}
@@ -256,55 +255,48 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                     </div>
 
                     {/* Right Panel - Chat Conversation */}
-                    <div className="w-[70%] border-2 border-white/30 border-dotted rounded p-6">
+                    <div className="w-[70%] border-2 border-white/30 border-dotted rounded">
                         <div className="h-full flex flex-col">
                             {/* Chat Header */}
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center">
-                                    <div className="w-12 h-12 bg-transparent rounded-full flex items-center justify-center mr-3">
-                                        <img 
-                                            src="/image/doge_head.png" 
-                                            alt="sDOGE" 
-                                            className="w-6 h-6 rounded-full"
-                                        />
+                            <div className="flex items-center mb-6 pb-0 border-b-2 border-white/30 border-dotted">
+                                <div className="w-[84px] h-[84px] bg-transparent border-r-2 border-white/30 border-dotted flex items-center justify-center">
+                                    <img 
+                                        src="/image/doge_head.png" 
+                                        alt="sDOGE" 
+                                        className="w-[84px] h-[84px] object-cover"
+                                    />
+                                </div>
+                                <div className="flex-1 flex justify-between items-center px-4">
+                                    <div className="text-white/80 text-sm font-medium" style={{ fontFamily: 'var(--font-beltram)' }}>
+                                        sDOGE
                                     </div>
-                                    <div>
-                                        <div className="text-[#ffd841] text-sm font-medium" style={{ fontFamily: 'var(--font-beltram)' }}>
-                                            sDOGE
-                                        </div>
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                                            <div className="text-white/50 text-xs" style={{ fontFamily: 'var(--font-beltram)' }}>
-                                                ONLINE
-                                            </div>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                        <div className="text-white/50 text-xs" style={{ fontFamily: 'var(--font-beltram)' }}>
+                                            ONLINE
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Chat Messages */}
-                            <div className="flex-1 overflow-y-auto space-y-4">
+                            <div className="flex-1 overflow-y-scroll space-y-4 px-6">
                                 {conversations[selectedChat]?.map((message) => (
-                                    <div key={message.id} className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+                                    <div key={message.id} className={`flex items-start ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+                                        {message.isBot && (
+                                            <div className="w-8 h-8 bg-transparent rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                                                <img 
+                                                    src="/image/cursor.png" 
+                                                    alt="sDOGE" 
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            </div>
+                                        )}
                                         <div className={`max-w-[80%] p-3 rounded-lg ${
                                             message.isBot 
                                                 ? 'bg-white/10 border border-white/20' 
                                                 : 'bg-[#ffd841]/20 border border-[#ffd841]/30'
                                         }`}>
-                                            {message.isBot && (
-                                                <div className="flex items-center mb-1">
-                                                    <div className="w-4 h-4 bg-transparent rounded-full flex items-center justify-center mr-2">
-                                                        <img 
-                                                            src="/image/doge_head.png" 
-                                                            alt="sDOGE" 
-                                                            className="w-3 h-3 rounded-full"
-                                                        />
-                                                    </div>
-                                                    <div className="text-[#ffd841] text-xs font-medium" style={{ fontFamily: 'var(--font-beltram)' }}>
-                                                        sDOGE
-                                                    </div>
-                                                </div>
-                                            )}
                                             <div className="text-white text-sm" style={{ fontFamily: 'var(--font-beltram)' }}>
                                                 {message.message}
                                             </div>
@@ -314,7 +306,7 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                             </div>
 
                             {/* Current Question Display */}
-                            <div className="mt-4 pt-4 border-t border-white/20">
+                            <div className="mt-4 pt-4 border-t border-white/20 px-6 pb-6">
                                 <div className="text-white/70 text-xs mb-2" style={{ fontFamily: 'var(--font-beltram)' }}>
                                     What is sDOGE?
                                 </div>
