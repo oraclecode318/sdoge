@@ -67,7 +67,6 @@ export default function Home() {
 
   // Animation control functions
   const handleAnimationsLoaded = useCallback((animations: string[]) => {
-    console.log('Animations loaded in parent:', animations);
     setAvailableAnimations(animations);
   }, []);
 

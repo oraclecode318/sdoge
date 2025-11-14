@@ -44,7 +44,6 @@ export default function Scene3D({
         action.stop();
       });
       setCurrentAnimation(null);
-      console.log('All animations stopped');
     } catch (error) {
       console.error('Error stopping animations:', error);
     }
@@ -67,7 +66,6 @@ export default function Scene3D({
         action.reset(); // Reset to beginning
         action.play();
         setCurrentAnimation(animationName);
-        console.log('Playing animation:', animationName);
         return true;
       }
     } catch (error) {
@@ -108,11 +106,9 @@ export default function Scene3D({
     try {
       if (spline._animationControls) {
         const animControls = spline._animationControls;
-        console.log('Animation Controls:', animControls);
 
         if (animControls.clipIdToAction) {
           const animationNames = Object.keys(animControls.clipIdToAction);
-          console.log('Available animations:', animationNames);
           setAnimations(animationNames);
 
           // Notify parent component about available animations

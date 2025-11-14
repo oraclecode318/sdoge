@@ -277,15 +277,15 @@ export default function Section4ChatPanel({ scrollProgress }: ChatPanelProps) {
                 }}
             >
                 <div className="flex gap-6 h-full">
-                    {/* Left Panel - Chat Histories */}
-                    <div className="w-[30%] border-2 border-white/30 border-dotted rounded flex flex-col">
+                    {/* Left Panel - Chat Histories - Only show if content would fill height */}
+                    <div className="w-[30%] border-2 border-white/30 border-dotted rounded" style={{ alignSelf: 'flex-start' }}>
                         {/* Header section */}
                         <div className="text-white p-7 text-lg uppercase font-light tracking-wide border-b-2 border-white/30 border-dotted" >
                             //
                         </div>
                         
                         {/* Chat History Items - auto height based on content */}
-                        <div className="space-y-2 p-6 flex-shrink-0">
+                        <div className="space-y-2 p-6">
                             {chatHistories.map((history) => (
                                 <button
                                     key={history.id}
